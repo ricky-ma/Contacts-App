@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 public class ContactList implements LoadAndSaveable {
 
+    
     private List<Contact> contacts;
     private ArrayList<Contact> searchResults = new ArrayList<>();
 
