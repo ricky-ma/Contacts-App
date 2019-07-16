@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestContact {
 
     private Contact c;
+    private int i;
     private String n;
     private String p;
     private String a;
@@ -28,7 +29,4 @@ public class TestContact {
         assertEquals(c.getAddress(),c.address);
         assertEquals(c.getEmail(),c.email);
     }
-
-
-
 }

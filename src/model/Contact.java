@@ -23,7 +23,7 @@ public class Contact extends Component {
 
 
     // MODIFIES: this
-    // EFFECTS: sets name, phone, address, and email
+    // EFFECTS: sets contact name, phone, address, and email
     @Override
     public void setName(String name) { this.name = name; }
 
@@ -34,7 +34,7 @@ public class Contact extends Component {
     public void setEmail(String email) { this.email = email; }
 
 
-    // EFFECTS: retrieves name, phone, address, and email
+    // EFFECTS: retrieves contact name, phone, address, and email
     @Override
     public String getName() {
         return name;

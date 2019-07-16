@@ -3,6 +3,8 @@ package ui;
 
 import model.ContactList;
 
+import java.io.IOException;
+
 public class Main {
 
     /*
@@ -33,7 +35,7 @@ public class Main {
 
 
     // EFFECTS: runs the program
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         ContactList contacts = new ContactList();
     }
 }
