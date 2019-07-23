@@ -1,4 +1,4 @@
-import model.RegularContact;
+import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestContactList {
 
-    private RegularContact contact1 = new RegularContact(
+    private FavoriteContact contact1 = new FavoriteContact(
             "John Smith","911","1600 Pennsylvania Ave.","jsmith@gmail.com", true );
     private RegularContact contact2 = new RegularContact(
             "Martin Garrix","1-604-111-9023","Mars","garrix99@yahoo.com", false);
     private RegularContact contact3 = new RegularContact(
             "Stormzy","6789998212","Atlanta, Georgia","vossibop@gmail.com", false);
 
-    private List<RegularContact> contacts = new ArrayList<>();
+    //private List<Contact> contacts = new ContactList();
 
     @BeforeEach
     private void beforeEachTest() throws IOException {
@@ -76,11 +76,12 @@ public class TestContactList {
         PrintWriter writer = new PrintWriter("savetestfile.txt");
         contacts.add(contact1);
         contacts.add(contact2);
-        for (RegularContact c : contacts) {
+        for (Contact c : contacts) {
             writer.print(c.getName()    + "---");
             writer.print(c.getPhone()   + "---");
             writer.print(c.getAddress() + "---");
-            writer.print(c.getEmail());
+            writer.print(c.getEmail()   + "---");
+            writer.print(c.getFavorite());
             writer.println();
         }
         writer.close();
@@ -100,20 +101,22 @@ public class TestContactList {
         assertEquals("911", contacts.get(0).getPhone());
         assertEquals("1600 Pennsylvania Ave.", contacts.get(0).getAddress());
         assertEquals("jsmith@gmail.com", contacts.get(0).getEmail());
+        assertTrue(contacts.get(0).getFavorite());
         assertEquals("Martin Garrix", contacts.get(1).getName());
         assertEquals("1-604-111-9023", contacts.get(1).getPhone());
         assertEquals("Mars", contacts.get(1).getAddress());
         assertEquals("garrix99@yahoo.com", contacts.get(1).getEmail());
+        assertFalse(contacts.get(1).getFavorite());
     }
 
-//    @Test
-//    void testNewFavoriteContact() {
-//        try {
-//
-//        } catch (ContactAlreadyExistsException e) {
-//
-//        }
-//        contacts.add(contact1);
-//
-//    }
+    @Test
+    void testNewFavoriteContact() {
+        try {
+            contacts.newFavoriteContact();
+        } catch (ContactAlreadyExistsException e) {
+
+        }
+        contacts.add(contact1);
+
+    }
 }

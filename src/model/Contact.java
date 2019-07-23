@@ -54,6 +54,3 @@ public abstract class Contact extends Component {
     }
 }
 
-class ContactAlreadyExistsException extends Exception {}
-
-class InvalidInputException extends Exception {}
