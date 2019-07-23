@@ -1,26 +1,22 @@
 package model;
 
-
 import java.awt.*;
 
-public class Contact extends Component {
-
-
+public abstract class Contact extends Component {
     // variable initializations
     public String name;
     public String phone;
     public String address;
     public String email;
+    public boolean favorite;
 
-
-    // EFFECTS: constructs new contact object
-    public Contact(String name, String phone, String address, String email){
+    public Contact(String name, String phone, String address, String email, boolean favorite) {
         this.name = name;
         this.phone = phone;
         this.address = address;
         this.email = email;
+        this.favorite = favorite;
     }
-
 
     // MODIFIES: this
     // EFFECTS: sets contact name, phone, address, and email
@@ -33,6 +29,7 @@ public class Contact extends Component {
 
     public void setEmail(String email) { this.email = email; }
 
+    public abstract void setFavorite(boolean favorite);
 
     // EFFECTS: retrieves contact name, phone, address, and email
     @Override
@@ -52,5 +49,11 @@ public class Contact extends Component {
         return email;
     }
 
-
+    public boolean getFavorite() {
+        return favorite;
+    }
 }
+
+class ContactAlreadyExistsException extends Exception {}
+
+class InvalidInputException extends Exception {}

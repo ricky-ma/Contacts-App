@@ -1,6 +1,8 @@
-Ricky Ma---9095699045---101 Big Booty Road---mr.rickyma@gmail.com
-Emily Mai---626-217-5422---2660 Wesbrook Mall---cmai007@ucr.edu
-John Smith---9098880081---1600 Pennsylvania Ave---johmsmith@yahoo.com
-Ricky Martin---909-iam-fame---1001 Las Vegas Blvd.---iamfamous@yahoo.com
-Ed Sheeran---1-800-278-3901---The Bellagio---ed@gmail.com
-Brian Wu---6044920385---East Vancouver---bwu88lol@gmail.com
+Ricky Ma---9095699045---22479 Birds Eye Dr. Diamond Bar CA 91765---mr.rickyma@gmail.com---true
+Emily Mai---626-217-5422---2660 Wesbrook Mall, Vancouver, BC V6T 1Z4---cmai007@ucr.edu---true
+Brian Wu---6044920385---Vancouver---bwu88lol@gmail.com---false
+John Smith---9098880081---1600 Pennsylvania Ave---johmsmith@yahoo.com---false
+John Kim---604-394-1938---2329 West Mall, Vancouver, BC V6T 1Z4---johnkimchi@yahoo.com---false
+Buzz Aldrin---123-456-7890---The Moon---buzzbuzz@gmail.com---true
+Ed Sheeran---1-800-278-3901---10 Downing Street, London UK---ed@gmail.com---false
+Alex Morgan---909-win-ball---Olympic Drive---alexmorgan@gmail.com---false
