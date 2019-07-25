@@ -1,6 +1,5 @@
 package model;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -10,22 +9,94 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-public class ContactList implements LoadAndSaveable {
+public class ContactList implements LoadAndSaveable, ContactListOperators {
 
 
     private List<Contact> contacts;
     private ArrayList<Contact> searchResults = new ArrayList<>();
-    private String path = "C:" + File.separator + "hello" + File.separator + "contactfile.txt";
-    File f = new File(path);
+
 
     //EFFECTS: constructs a scanner object
     private Scanner input = new Scanner(System.in);
 
 
     // EFFECTS: constructs a new ArrayList for contacts
-    public ContactList() throws IOException {
-        contacts = new ArrayList<>();
+    public ContactList() {
+        contacts = new ArrayList<Contact>();
         run();
+    }
+
+
+    // EFFECTS: returns the size of contacts
+    public int size() {
+        return contacts.size();
+    }
+
+
+    // EFFECTS: returns if contacts is empty
+    public boolean isEmpty() {
+        return contacts.isEmpty();
+    }
+
+
+    // EFFECTS: returns whether or not contacts contains a specific contact
+    public boolean contains(Contact c) {
+        return contacts.contains(c);
+    }
+
+
+    // MODIFIES: this
+    // EFFECTS: adds a contact to contacts
+    public void add(Contact c) {
+        contacts.add(c);
+    }
+
+
+//    // EFFECTS: gets the list inside contacts
+//    public List<Contact> getList(ContactList contacts) {
+//        for (Contact c : contacts) {
+//
+//        }
+//    }
+
+
+    // EFFECTS: check if contact already exists, throw ContactAlreadyExistsException if true
+    public void doesContactExist(Contact contact) throws ContactAlreadyExistsException {
+        for (Contact c : contacts) {
+            if (c.getName().equals(contact.getName())) {
+                throw new ContactAlreadyExistsException();
+            }
+        }
+    }
+
+
+    // EFFECTS: continue if input name is valid, otherwise throw InvalidInputException
+    public void checkInputName(String name) throws InvalidInputException {
+        char [] chars = name.toCharArray();
+        for (char c : chars) {
+            if (!Character.isLetter(c)) {
+                throw new InvalidInputException();
+            }
+        }
+    }
+
+
+    // EFFECTS: continue if input phone is valid, otherwise throw InvalidInputException
+    public void checkInputPhone(String phone) throws InvalidInputException {
+        char [] chars = phone.toCharArray();
+        for (char c : chars) {
+            if (!Character.isDigit(c) && c != '-' && c != '(' && c != ')') {
+                throw new InvalidInputException();
+            }
+        }
+    }
+
+
+    // EFFECTS: continue if input email is valid, otherwise throw InvalidInputException
+    public void checkInputEmail(String email) throws InvalidInputException {
+        if (!email.contains("@") && !email.contains(".")) {
+            throw new InvalidInputException();
+        }
     }
 
 
@@ -192,7 +263,7 @@ public class ContactList implements LoadAndSaveable {
 
     // MODIFIES: this
     // EFFECTS: adds new contact into contacts as a favorite, throws exception if contact already exists
-    public void newFavoriteContact(String name, String phone, String address, String email) {
+    private void newFavoriteContact(String name, String phone, String address, String email) {
         FavoriteContact contact = new FavoriteContact(name, phone, address, email, true);
         try {
             doesContactExist(contact);
@@ -212,7 +283,7 @@ public class ContactList implements LoadAndSaveable {
 
     // MODIFIES: this
     // EFFECTS: adds new contact into contacts as a regular contact, throws exception if contact already exists
-    public void newRegularContact(String name, String phone, String address, String email) {
+    private void newRegularContact(String name, String phone, String address, String email) {
         RegularContact contact = new RegularContact(name, phone, address, email, false);
         try {
             doesContactExist(contact);
@@ -440,45 +511,5 @@ public class ContactList implements LoadAndSaveable {
         int n = newInput.nextInt();
         contacts.remove(n - 1);
         System.out.println("Contact deleted.");
-    }
-
-
-    // EFFECTS: check if contact already exists, throw ContactAlreadyExistsException if true
-    private void doesContactExist(Contact contact) throws ContactAlreadyExistsException {
-        for (Contact c : contacts) {
-            if (c.getName().equals(contact.getName())) {
-                throw new ContactAlreadyExistsException();
-            }
-        }
-    }
-
-
-    // EFFECTS: continue if input name is valid, otherwise throw InvalidInputException
-    private void checkInputName(String name) throws InvalidInputException {
-        char [] chars = name.toCharArray();
-        for (char c : chars) {
-            if (!Character.isLetter(c)) {
-                throw new InvalidInputException();
-            }
-        }
-    }
-
-
-    // EFFECTS: continue if input phone is valid, otherwise throw InvalidInputException
-    private void checkInputPhone(String phone) throws InvalidInputException {
-        char [] chars = phone.toCharArray();
-        for (char c : chars) {
-            if (!Character.isDigit(c) && c != '-' && c != '(' && c != ')') {
-                throw new InvalidInputException();
-            }
-        }
-    }
-
-
-    // EFFECTS: continue if input email is valid, otherwise throw InvalidInputException
-    private void checkInputEmail(String email) throws InvalidInputException {
-        if (!email.contains("@") && !email.contains(".")) {
-            throw new InvalidInputException();
-        }
     }
 }

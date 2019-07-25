@@ -1,8 +1,6 @@
 package model;
 
-import java.awt.*;
-
-public abstract class Contact extends Component {
+public abstract class Contact {
     // variable initializations
     public String name;
     public String phone;
@@ -20,7 +18,7 @@ public abstract class Contact extends Component {
 
     // MODIFIES: this
     // EFFECTS: sets contact name, phone, address, and email
-    @Override
+
     public void setName(String name) { this.name = name; }
 
     public void setPhone(String phone) { this.phone = phone; }
@@ -32,7 +30,7 @@ public abstract class Contact extends Component {
     public abstract void setFavorite(boolean favorite);
 
     // EFFECTS: retrieves contact name, phone, address, and email
-    @Override
+
     public String getName() {
         return name;
     }
