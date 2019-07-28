@@ -22,7 +22,7 @@ public class ContactList implements LoadAndSaveable, ContactListOperators {
 
     // EFFECTS: constructs a new ArrayList for contacts
     public ContactList() {
-        contacts = new ArrayList<Contact>();
+        contacts = new ArrayList<>();
         run();
     }
 
@@ -51,6 +51,11 @@ public class ContactList implements LoadAndSaveable, ContactListOperators {
         contacts.add(c);
     }
 
+    // EFFECTS: gets a contact given its index
+    public Contact get(int i) {
+        return contacts.get(i);
+    }
+
 
 //    // EFFECTS: gets the list inside contacts
 //    public List<Contact> getList(ContactList contacts) {
@@ -70,36 +75,6 @@ public class ContactList implements LoadAndSaveable, ContactListOperators {
     }
 
 
-    // EFFECTS: continue if input name is valid, otherwise throw InvalidInputException
-    public void checkInputName(String name) throws InvalidInputException {
-        char [] chars = name.toCharArray();
-        for (char c : chars) {
-            if (!Character.isLetter(c)) {
-                throw new InvalidInputException();
-            }
-        }
-    }
-
-
-    // EFFECTS: continue if input phone is valid, otherwise throw InvalidInputException
-    public void checkInputPhone(String phone) throws InvalidInputException {
-        char [] chars = phone.toCharArray();
-        for (char c : chars) {
-            if (!Character.isDigit(c) && c != '-' && c != '(' && c != ')') {
-                throw new InvalidInputException();
-            }
-        }
-    }
-
-
-    // EFFECTS: continue if input email is valid, otherwise throw InvalidInputException
-    public void checkInputEmail(String email) throws InvalidInputException {
-        if (!email.contains("@") && !email.contains(".")) {
-            throw new InvalidInputException();
-        }
-    }
-
-
     // EFFECTS: splits a line into separate Strings by "---", stores each String into an ArrayList
     public static ArrayList<String> splitOnSpace(String line) {
         String[] splits = line.split("---");
@@ -110,26 +85,22 @@ public class ContactList implements LoadAndSaveable, ContactListOperators {
     // MODIFIES: contacts
     // EFFECTS: gets parameters of each contact from contactfile.txt and creates a new RegularContact object
     //          adds newly created contact to contacts
-    public void load() {
-        try {
-            List<String> lines = Files.readAllLines(Paths.get("contactfile.txt"));
-            for (String line : lines) {
-                ArrayList<String> partsOfLine = splitOnSpace(line);
-                String name = partsOfLine.get(0);
-                String phone = partsOfLine.get(1);
-                String address = partsOfLine.get(2);
-                String email = partsOfLine.get(3);
-                boolean favorite = Boolean.parseBoolean(partsOfLine.get(4));
-                if (favorite) {
-                    Contact contact = new FavoriteContact(name, phone, address, email, true);
-                    contacts.add(contact);
-                } else {
-                    Contact contact = new RegularContact(name, phone, address, email, false);
-                    contacts.add(contact);
-                }
+    public void load() throws IOException {
+        List<String> lines = Files.readAllLines(Paths.get("contactfile.txt"));
+        for (String line : lines) {
+            ArrayList<String> partsOfLine = splitOnSpace(line);
+            String name = partsOfLine.get(0);
+            String phone = partsOfLine.get(1);
+            String address = partsOfLine.get(2);
+            String email = partsOfLine.get(3);
+            boolean favorite = Boolean.parseBoolean(partsOfLine.get(4));
+            if (favorite) {
+                Contact contact = new FavoriteContact(name, phone, address, email, true);
+                contacts.add(contact);
+            } else {
+                Contact contact = new RegularContact(name, phone, address, email, false);
+                contacts.add(contact);
             }
-        } catch (IOException e) {
-            System.out.println("Loadable file not found.");
         }
     }
 
@@ -159,29 +130,16 @@ public class ContactList implements LoadAndSaveable, ContactListOperators {
     // MODIFIES: contacts
     // EFFECTS: main flow for adding and viewing contacts
     public void run() {
-        load();
+        try {
+            load();
+        } catch (IOException e) {
+            System.out.println("Loadable file not found.");
+        }
         menuOne();
         int n1 = input.nextInt();
         while (n1 != 2) {
             menuTwo();
-            int n2 = input.nextInt();
-            if (n2 == 1) {
-                newContact();
-            } else if (n2 == 2) {
-                findContact();
-            } else if (n2 == 3) {
-                printFavorites();
-            } else if (n2 == 4) {
-                if (contacts.size() == 0) {
-                    noContacts();
-                } else {
-                    printContacts();
-                }
-            } else if (n2 == 5) {
-                deleteContact();
-            } else {
-                return;
-            }
+            getInputForMenuTwo();
             save();
         }
     }
@@ -220,25 +178,48 @@ public class ContactList implements LoadAndSaveable, ContactListOperators {
     }
 
 
-    // REQUIRES: contacts.size() == 0
-    // EFFECTS: prints no contacts menu, receives user input for whether new contact should be added
-    private void noContacts() {
-        System.out.println();
-        System.out.println("No contacts!");
-        System.out.println("Would you like to add a contact?");
-        System.out.println("1. Yes");
-        System.out.println("2. No");
-        int n3 = input.nextInt();
-        if (n3 == 1) {
-            newContact();
+    // EFFECTS: user input model and flow for menuTwo
+    private void getInputForMenuTwo() {
+        int n2 = input.nextInt();
+        switch (n2) {
+            case 1: getNewContactInfo();
+                break;
+            case 2: findContact();
+                break;
+            case 3: printFavorites();
+                break;
+            case 4: noContacts(contacts.size() == 0);
+                    printContacts(contacts.size() == 0);
+                break;
+            case 5: deleteContact();
+                break;
+            case 6: System.exit(0);
+                break;
+            default: System.out.println("Invalid input. Only digits 1-6 accepted.");;
         }
     }
 
 
-    // MODIFIES: contacts
+    // EFFECTS: prints no contacts menu if contacts.size == 0,
+    //          receives user input for whether new contact should be added
+    private void noContacts(boolean noContacts) {
+        if (noContacts) {
+            System.out.println();
+            System.out.println("No contacts!");
+            System.out.println("Would you like to add a contact?");
+            System.out.println("1. Yes");
+            System.out.println("2. No");
+            int n3 = input.nextInt();
+            if (n3 == 1) {
+                getNewContactInfo();
+            }
+        }
+    }
+
+
     // REQUIRES: user input n2 must equal 1
     // EFFECTS: prints add-contact interface, where user enters in new data for new contact
-    private void newContact() {
+    private void getNewContactInfo() {
         System.out.println();
         Scanner newInput = new Scanner(System.in);
         System.out.println("Name: ");
@@ -253,51 +234,37 @@ public class ContactList implements LoadAndSaveable, ContactListOperators {
         System.out.println("1.Yes");
         System.out.println("2.No");
         int n = newInput.nextInt();
+        addContactToContacts(favoriteOrRegular(n, name, phone, address, email));
+    }
+
+
+    // EFFECTS: helper method for user to create a favorite or regular contact
+    private Contact favoriteOrRegular(int n, String name, String phone, String address, String email) {
         if (n == 1) {
-            newFavoriteContact(name, phone, address, email);
+            FavoriteContact contact = new FavoriteContact(name, phone, address, email, true);
+            if (contact.checkInput()) {
+                return contact;
+            }
+            return null;
         } else {
-            newRegularContact(name, phone, address, email);
+            RegularContact contact = new RegularContact(name, phone, address, email, false);
+            if (contact.checkInput()) {
+                return contact;
+            }
+            return null;
         }
     }
 
 
-    // MODIFIES: this
-    // EFFECTS: adds new contact into contacts as a favorite, throws exception if contact already exists
-    private void newFavoriteContact(String name, String phone, String address, String email) {
-        FavoriteContact contact = new FavoriteContact(name, phone, address, email, true);
+    // EFFECTS: check if contact already exists, throw ContactAlreadyExistsException if true
+    //          add contact to contacts if false
+    private void addContactToContacts(Contact c) {
         try {
-            doesContactExist(contact);
-            checkInputName(name);
-            checkInputEmail(email);
-            contacts.add(contact);
+            doesContactExist(c);
+            contacts.add(c);
             createContactAddedMessage();
         } catch (ContactAlreadyExistsException e) {
             System.out.println("Contact already exists!");
-        } catch (InvalidInputException e) {
-            System.out.println("Invalid input!");
-        } finally {
-            printContacts();
-        }
-    }
-
-
-    // MODIFIES: this
-    // EFFECTS: adds new contact into contacts as a regular contact, throws exception if contact already exists
-    private void newRegularContact(String name, String phone, String address, String email) {
-        RegularContact contact = new RegularContact(name, phone, address, email, false);
-        try {
-            doesContactExist(contact);
-            checkInputName(name);
-            checkInputPhone(phone);
-            checkInputEmail(email);
-            contacts.add(contact);
-            createContactAddedMessage();
-        } catch (ContactAlreadyExistsException e) {
-            System.out.println("Contact already exists!");
-        } catch (InvalidInputException e) {
-            System.out.println("Invalid input!");
-        } finally {
-            printContacts();
         }
     }
 
@@ -358,19 +325,20 @@ public class ContactList implements LoadAndSaveable, ContactListOperators {
         Scanner newInput = new Scanner(System.in);
         System.out.println();
         System.out.println("Which contact?");
-        int n1 = newInput.nextInt(); // TODO: Integer.parseInt(input.nextLine())
+        int n1 = newInput.nextInt();
         printSelectedSearchResult(n1);
+        Contact c = searchResults.get(n1 - 1);
         int n2 = newInput.nextInt();
         if (n2 == 1) {
-            editContactName(n1);
+            c.editContactName(c);
         } else if (n2 == 2) {
-            editContactPhone(n1);
+            c.editContactPhone(c);
         } else if (n2 == 3) {
-            editContactAddress(n1);
+            c.editContactAddress(c);
         } else if (n2 == 4) {
-            editContactEmail(n1);
+            c.editContactEmail(c);
         } else {
-            editContactFavorite(n1);
+            c.editContactFavorite(c);
         }
     }
 
@@ -388,91 +356,18 @@ public class ContactList implements LoadAndSaveable, ContactListOperators {
     }
 
 
-    // MODIFIES: name of a contact
-    // EFFECT: let user change name of a contact
-    private void editContactName(int n1) {
-        Scanner newNewInput = new Scanner(System.in);
-        System.out.println();
-        System.out.println("Name: ");
-        String name = newNewInput.nextLine();
-        try {
-            checkInputName(name);
-        } catch (InvalidInputException e) {
-            System.out.println("Name can only contain letters.");
-        }
-        searchResults.get(n1 - 1).setName(name);
-    }
-
-
-    // MODIFIES: phone of a contact
-    // EFFECT: let user change phone of a contact
-    private void editContactPhone(int n1) {
-        Scanner newNewInput = new Scanner(System.in);
-        System.out.println();
-        System.out.println("Phone: ");
-        String phone = newNewInput.nextLine();
-        try {
-            checkInputPhone(phone);
-        } catch (InvalidInputException e) {
-            System.out.println("Invalid phone number.");
-        }
-        searchResults.get(n1 - 1).setPhone(phone);
-    }
-
-
-    // MODIFIES: address of a contact
-    // EFFECT: let user change address of a contact
-    private void editContactAddress(int n1) {
-        Scanner newNewInput = new Scanner(System.in);
-        System.out.println();
-        System.out.println("Address: ");
-        String address = newNewInput.nextLine();
-        searchResults.get(n1 - 1).setAddress(address);
-    }
-
-
-    // MODIFIES: email of a contact
-    // EFFECT: let user change email of a contact
-    private void editContactEmail(int n1) {
-        Scanner newNewInput = new Scanner(System.in);
-        System.out.println();
-        System.out.println("Email: ");
-        String email = newNewInput.nextLine();
-        try {
-            checkInputEmail(email);
-        } catch (InvalidInputException e) {
-            System.out.println("Invalid email address.");
-        }
-        searchResults.get(n1 - 1).setEmail(email);
-    }
-
-
-    // MODIFIES: favorite state of a contact
-    // EFFECT: let user set favorite to true or false
-    private void editContactFavorite(int n1) {
-        Scanner newNewInput = new Scanner(System.in);
-        System.out.println();
-        System.out.println("Favorite: ");
-        System.out.println("1. Yes");
-        System.out.println("2. No");
-        if (newNewInput.nextInt() == 1) {
-            searchResults.get(n1 - 1).setFavorite(true);
-        } else {
-            searchResults.get(n1 - 1).setFavorite(false);
-        }
-    }
-
-
     // REQUIRES: user input n2 must equal 3
-    // EFFECTS: prints contact list into console, showing all details of each contact
-    private void printContacts() {
-        for (Contact c : contacts) {
-            System.out.println();
-            System.out.println("Name: "    + c.getName());
-            System.out.println("Phone: "   + c.getPhone());
-            System.out.println("Address: " + c.getAddress());
-            System.out.println("Email: "   + c.getEmail());
-            System.out.println("Favorite: " + c.getFavorite());
+    // EFFECTS: prints contact list into console if contacts.size != 0, showing all details of each contact
+    private void printContacts(boolean noContacts) {
+        if (!noContacts) {
+            for (Contact c : contacts) {
+                System.out.println();
+                System.out.println("Name: " + c.getName());
+                System.out.println("Phone: " + c.getPhone());
+                System.out.println("Address: " + c.getAddress());
+                System.out.println("Email: " + c.getEmail());
+                System.out.println("Favorite: " + c.getFavorite());
+            }
         }
     }
 
@@ -481,7 +376,7 @@ public class ContactList implements LoadAndSaveable, ContactListOperators {
     // EFFECTS: prints contact list into console, showing all details of each contact
     private void printFavorites() {
         for (Contact c : contacts) {
-            if (c.getFavorite()) {
+            if (c.favorite) {
                 System.out.println();
                 System.out.println("Name: "    + c.getName());
                 System.out.println("Phone: "   + c.getPhone());

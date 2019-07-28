@@ -3,6 +3,7 @@ Emily Mai---626-217-5422---2660 Wesbrook Mall, Vancouver, BC V6T 1Z4---cmai007@u
 Brian Wu---6044920385---Vancouver---bwu88lol@gmail.com---false
 John Smith---9098880081---1600 Pennsylvania Ave---johmsmith@yahoo.com---false
 John Kim---604-394-1938---2329 West Mall, Vancouver, BC V6T 1Z4---johnkimchi@yahoo.com---false
-Buzz Aldrin---123-456-7890---The Moon---buzzbuzz@gmail.com---true
+Buzz Aldrin---123-456-7890---The Moon---buzzbuzz@gmail.com---false
 Ed Sheeran---1-800-278-3901---10 Downing Street, London UK---ed@gmail.com---false
-Alex Morgan---909-win-ball---Olympic Drive---alexmorgan@gmail.com---false
+Ricky Martin---sakdjfnkjrn---The Bellagio---iamfamous@gmail.com---true
+Brittany Chu---510-948-2839---Oakland, CA---brittanychu@ucr.edu---true

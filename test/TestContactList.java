@@ -126,42 +126,42 @@ public class TestContactList {
         }
     }
 
-    @Test
-    void testInvalidInputException() {
-        try {
-            contacts.checkInputName("Ricky");
-        } catch (InvalidInputException e) {
-            fail();
-        }
-        try {
-            contacts.checkInputName("Ricky9301");
-            fail();
-        } catch (InvalidInputException e) {
-            // expected
-        }
-
-        try {
-            contacts.checkInputEmail("mr.rickyma@gmail.com");
-        } catch (InvalidInputException e) {
-            fail();
-        }
-        try {
-            contacts.checkInputEmail("mr.rickymagmail");
-            fail();
-        } catch (InvalidInputException e) {
-            // expected
-        }
-
-        try {
-            contacts.checkInputPhone("(909)-569-9045");
-        } catch (InvalidInputException e) {
-            fail();
-        }
-        try {
-            contacts.checkInputPhone("604-asd-9031");
-            fail();
-        } catch (InvalidInputException e) {
-            // expected
-        }
-    }
+//    @Test
+//    void testInvalidInputException() {
+//        try {
+//            contacts.checkInputName("Ricky");
+//        } catch (InvalidInputException e) {
+//            fail();
+//        }
+//        try {
+//            contacts.checkInputName("Ricky9301");
+//            fail();
+//        } catch (InvalidInputException e) {
+//            // expected
+//        }
+//
+//        try {
+//            contacts.checkInputEmail("mr.rickyma@gmail.com");
+//        } catch (InvalidInputException e) {
+//            fail();
+//        }
+//        try {
+//            contacts.checkInputEmail("mr.rickymagmail");
+//            fail();
+//        } catch (InvalidInputException e) {
+//            // expected
+//        }
+//
+//        try {
+//            contacts.checkInputPhone("(909)-569-9045");
+//        } catch (InvalidInputException e) {
+//            fail();
+//        }
+//        try {
+//            contacts.checkInputPhone("604-asd-9031");
+//            fail();
+//        } catch (InvalidInputException e) {
+//            // expected
+//        }
+//    }
 }
