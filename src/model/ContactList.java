@@ -4,14 +4,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ContactList implements LoadAndSaveable, ContactListOperators {
 
-
+    private Map<String, Contact> contactMap = new HashMap<>(); // String = name of Contact
     private List<Contact> contacts;
     private ArrayList<Contact> searchResults = new ArrayList<>();
 
