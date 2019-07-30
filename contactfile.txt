@@ -1,9 +1,5 @@
-Ricky Ma---9095699045---22479 Birds Eye Dr. Diamond Bar CA 91765---mr.rickyma@gmail.com---true
-Emily Mai---626-217-5422---2660 Wesbrook Mall, Vancouver, BC V6T 1Z4---cmai007@ucr.edu---true
-Brian Wu---6044920385---Vancouver---bwu88lol@gmail.com---false
 John Smith---9098880081---1600 Pennsylvania Ave---johmsmith@yahoo.com---false
-John Kim---604-394-1938---2329 West Mall, Vancouver, BC V6T 1Z4---johnkimchi@yahoo.com---false
-Buzz Aldrin---123-456-7890---The Moon---buzzbuzz@gmail.com---false
-Ed Sheeran---1-800-278-3901---10 Downing Street, London UK---ed@gmail.com---false
-Ricky Martin---sakdjfnkjrn---The Bellagio---iamfamous@gmail.com---true
-Brittany Chu---510-948-2839---Oakland, CA---brittanychu@ucr.edu---true
+Ricky Ma---9095699045---22479 Birds Eye Dr. Diamond Bar CA---mr.rickyma@gmail.com---true
+Emily Mai---626-217-5422---1001 Linden Dr. Riverside CA---cmai007@ucr.edu---true
+Test Name---604-707-9090---101 Testing Dr.---testing@gmail.com---false
+Brittany Chu---542-291-4892---Oakland California---britchu1998@gmail.com---false

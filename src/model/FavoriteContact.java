@@ -17,11 +17,10 @@ public class FavoriteContact extends Contact {
 //        }
 //    }
 
-    public void addContact(RegularContact c) {
-        if (!contacts.contains(c)) {
-            contacts.add(c);
-            c.addFavorite(this);
-        }
-    }
-
+//    public void addContact(RegularContact c) {
+//        if (!contacts.contains(c)) {
+//            contacts.add(c);
+//            c.addFavorite(this);
+//        }
+//    }
 }

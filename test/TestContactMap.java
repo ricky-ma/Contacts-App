@@ -1,76 +1,125 @@
-import model.*;
+import model.ContactMap;
+import model.FavoriteContact;
+import model.RegularContact;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
 
-import static model.ContactList.splitOnSpace;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class TestContactList {
+public class TestContactMap {
 
-    private FavoriteContact contact1 = new FavoriteContact(
+    private ContactMap cMap;
+
+    private FavoriteContact c1 = new FavoriteContact(
             "John Smith","911","1600 Pennsylvania Ave.","jsmith@gmail.com", true );
-    private RegularContact contact2 = new RegularContact(
+    private RegularContact c2 = new RegularContact(
             "Martin Garrix","1-604-111-9023","Mars","garrix99@yahoo.com", false);
-    private RegularContact contact3 = new RegularContact(
+    private RegularContact c3 = new RegularContact(
             "Stormzy","6789998212","Atlanta, Georgia","vossibop@gmail.com", false);
 
-    private ContactList contacts = new ContactList();
-    //private List<Contact> contacts = new ArrayList<Contact>();
 
 
     @BeforeEach
-    private void beforeEachTest() throws IOException {
-        ContactList contacts = new ContactList();
+    void beforeEachTest() {
+        cMap = new ContactMap();
+        cMap.add(c1);
+        cMap.add(c2);
+        cMap.add(c3);
+    }
+
+    @Test
+    void testContactMapOperators() {
+        assertEquals(3,cMap.size());
+        assertFalse(cMap.isEmpty());
+        assertTrue(cMap.contains(c1));
+        assertEquals(c3,cMap.get("Stormy"));
+    }
+
+    @Test
+    void testRun() throws IOException {
+        String input = "6";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+        cMap.run();
+    }
+
+    @Test
+    void testAddAContact() {
+    }
+
+    @Test
+    void testFindAContact() {
+    }
+
+    @Test
+    void testPrintFavorites() {
     }
 
     @Test
     void testNoContacts() {
-        assertEquals(0,contacts.size());
-        assertTrue(contacts.isEmpty());
-        assertFalse(contacts.contains(contact1));
-
-        // testing addContact(), contacts is empty so with contact added, contact.length() should equal 1
-        contacts.add(contact1);
-        assertEquals(1,contacts.size());
     }
 
     @Test
-    void testMultiContacts() {
-        contacts.add(contact1);
-        contacts.add(contact2);
-        assertEquals(2, contacts.size());
-        assertFalse(contacts.isEmpty());
-        assertFalse(contacts.contains(contact3));
-
-        contacts.add(contact3);
-        assertEquals(3, contacts.size());
-        assertTrue(contacts.contains(contact3));
-
-
+    void testPrintContacts() {
     }
 
     @Test
-    void testLoad() throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get("loadtestfile.txt"));
-        int counter = 0;
-        for (String line : lines) {
-            ArrayList<String> partsOfLine = splitOnSpace(line);
-            String name = partsOfLine.get(0);
-            String phone = partsOfLine.get(1);
-            String address = partsOfLine.get(2);
-            String email = partsOfLine.get(3);
-            boolean favorite = Boolean.parseBoolean(partsOfLine.get(4));
-            RegularContact contact = new RegularContact(name, phone, address, email, favorite);
-            contacts.add(contact);
-        }
+    void testDeleteContact() {
     }
+
+
+
+
+
+
+
+
+
+//    @Test
+//    void testNoContacts() {
+//        assertEquals(0,cMap.size());
+//        assertTrue(cMap.isEmpty());
+//        assertFalse(cMap.contains(contact1));
+//
+//        // testing addContact(), contacts is empty so with contact added, contact.length() should equal 1
+//        cMap.add(contact1);
+//        assertEquals(1,cMap.size());
+//    }
+//
+//    @Test
+//    void testMultiContacts() {
+//        cMap.add(contact1);
+//        cMap.add(contact2);
+//        assertEquals(2, cMap.size());
+//        assertFalse(cMap.isEmpty());
+//        assertFalse(cMap.contains(contact3));
+//
+//        cMap.add(contact3);
+//        assertEquals(3, cMap.size());
+//        assertTrue(cMap.contains(contact3));
+//
+//
+//    }
+//
+//    @Test
+//    void testLoad() throws IOException {
+//        List<String> lines = Files.readAllLines(Paths.get("loadtestfile.txt"));
+//        for (String line : lines) {
+//            ArrayList<String> partsOfLine = splitOnSpace(line);
+//            String name = partsOfLine.get(0);
+//            String phone = partsOfLine.get(1);
+//            String address = partsOfLine.get(2);
+//            String email = partsOfLine.get(3);
+//            boolean favorite = Boolean.parseBoolean(partsOfLine.get(4));
+//            RegularContact contact = new RegularContact(name, phone, address, email, favorite);
+//            cMap.add(contact);
+//        }
+//    }
 
 //    @Test
 //    void testSave() throws IOException {
@@ -110,21 +159,21 @@ public class TestContactList {
 //        assertFalse(contacts.get(1).getFavorite());
 //    }
 
-    @Test
-    void testDoesContactExist() {
-        try {
-            contacts.doesContactExist(contact1);
-        } catch (ContactAlreadyExistsException e) {
-            fail("Exception should not have been thrown!");
-        }
-        contacts.add(contact1);
-        try {
-            contacts.doesContactExist(contact1);
-            fail("Exception should have been thrown!");
-        } catch (ContactAlreadyExistsException e) {
-            // expected
-        }
-    }
+//    @Test
+//    void testDoesContactExist() {
+//        try {
+//            cMap.doesContactExist(contact1);
+//        } catch (ContactAlreadyExistsException e) {
+//            fail("Exception should not have been thrown!");
+//        }
+//        cMap.add(contact1);
+//        try {
+//            cMap.doesContactExist(contact1);
+//            fail("Exception should have been thrown!");
+//        } catch (ContactAlreadyExistsException e) {
+//            // expected
+//        }
+//    }
 
 //    @Test
 //    void testInvalidInputException() {

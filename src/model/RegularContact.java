@@ -14,12 +14,12 @@ public class RegularContact extends Contact {
 
 
 
-    // MODIFIES: favorites
-    // EFFECTS: adds a favorite contact to favorites
-    public void addFavorite(FavoriteContact fc) {
-        if (!favorites.contains(fc)) {
-            favorites.add(fc);
-            fc.addContact(this);
-        }
-    }
+//    // MODIFIES: favorites
+//    // EFFECTS: adds a favorite contact to favorites
+//    public void addFavorite(FavoriteContact fc) {
+//        if (!favorites.contains(fc)) {
+//            favorites.add(fc);
+//            fc.addContact(this);
+//        }
+//    }
 }

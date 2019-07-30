@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 
@@ -10,6 +11,23 @@ public abstract class Contact {
     public String address;
     public String email;
     public boolean favorite;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contact contact = (Contact) o;
+        return favorite == contact.favorite &&
+                name.equals(contact.name) &&
+                phone.equals(contact.phone) &&
+                address.equals(contact.address) &&
+                email.equals(contact.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, phone, address, email, favorite);
+    }
 
     public Contact(String name, String phone, String address, String email, boolean favorite) {
         this.name = name;
@@ -77,7 +95,7 @@ public abstract class Contact {
 
 
     // EFFECTS: continue if input name is valid, otherwise throw InvalidInputException
-    public void checkInputName(String name) throws InvalidInputException {
+    private void checkInputName(String name) throws InvalidInputException {
         char [] chars = name.toCharArray();
         for (char c : chars) {
             if (!Character.isLetter(c) && !Character.isSpaceChar(c)) {
@@ -88,7 +106,7 @@ public abstract class Contact {
 
 
     // EFFECTS: continue if input phone is valid, otherwise throw InvalidInputException
-    public void checkInputPhone(String phone) throws InvalidInputException {
+    private void checkInputPhone(String phone) throws InvalidInputException {
         char [] chars = phone.toCharArray();
         for (char c : chars) {
             if (!Character.isDigit(c) && c != '-' && c != '(' && c != ')') {
@@ -99,7 +117,7 @@ public abstract class Contact {
 
 
     // EFFECTS: continue if input email is valid, otherwise throw InvalidInputException
-    public void checkInputEmail(String email) throws InvalidInputException {
+    private void checkInputEmail(String email) throws InvalidInputException {
         if (!email.contains("@") | !email.contains(".")) {
             throw new InvalidInputException();
         }
