@@ -172,8 +172,8 @@ public class TestContact {
 
     @Test
     void testEquals() {
-        assertTrue(rc1.equals(rc1));
-        assertFalse(rc1.equals(rc2));
-        // TODO: get full coverage
+        RegularContact rc1a = new RegularContact(n, p, a, e, false);
+        assertEquals(rc1,rc1a);
+        assertNotEquals(rc1,rc2);
     }
 }

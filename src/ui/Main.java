@@ -46,12 +46,44 @@ public class Main {
     }
 
 
-    public static int mainMenuUI() {
-        return input.nextInt();
+    // EFFECTS: user input model and flow for main menu
+    public static void mainMenu(ContactMap contactMap) {
+        int n2 = input.nextInt();
+        while (n2 != 7) {
+            switchLoop(contactMap, n2);
+            contactMap.printMenu();
+            n2 = input.nextInt();
+        }
     }
 
 
-    public static Contact getNewContactInfoUI() {
+    private static void switchLoop(ContactMap contactMap, int n) {
+        switch (n) {
+            case 1:
+                doCase1(contactMap);
+                break;
+            case 2:
+                doCase2(contactMap);
+                break;
+            case 3:
+                doCase3(contactMap);
+                break;
+            case 4:
+                contactMap.printFavorites();
+                break;
+            case 5:
+                contactMap.printAllContacts();
+                break;
+            case 6:
+                doCase6(contactMap);
+                break;
+            default:
+                System.out.println("Invalid input. Only digits 1-6 accepted.");
+        }
+    }
+
+
+    private static Contact getNewContactInfoUI() {
         System.out.println();
         Scanner newInput = new Scanner(System.in);
         System.out.println("Name: ");
@@ -70,54 +102,48 @@ public class Main {
     }
 
 
-    public static int noContactsUI() {
-        System.out.println();
-        System.out.println("No contacts!");
-        System.out.println("Would you like to add a contact?");
-        System.out.println("1. Yes");
-        System.out.println("2. No");
-        return input.nextInt();
-    }
-
-
-    public static String findContactUI() {
-        Scanner newInput = new Scanner(System.in);
-        System.out.println();
-        System.out.println("First or last name: ");
-        return newInput.nextLine();
-    }
-
-
-    public static int askEditContactUI() {
-        Scanner newNewInput = new Scanner(System.in);
-        System.out.println();
-        System.out.println("Edit contact?");
-        System.out.println("1. Yes");
-        System.out.println("2. No");
-        return newNewInput.nextInt();
-    }
-
-
-    public static String editContactUIOne() {
-        Scanner newInput = new Scanner(System.in);
-        System.out.println();
-        System.out.println("Enter full name of contact you would like to edit:");
-        return newInput.nextLine();
-    }
-
-
-    public static int editContactUITwo() {
+    private static int newIntInput() {
         Scanner newInput = new Scanner(System.in);
         return newInput.nextInt();
     }
 
-    // EFFECTS: get user input for which contact to delete
-    public static String deleteContactUI() {
+
+    private static String newStringInput() {
+        Scanner newInput = new Scanner(System.in);
+        return newInput.nextLine();
+    }
+
+
+    private static void doCase1(ContactMap contactMap) {
+        Contact c = getNewContactInfoUI();
+        contactMap.addNewContact(c);
+    }
+
+
+    private static void doCase2(ContactMap contactMap) {
+        System.out.println();
+        System.out.println("First or last name: ");
+        String search = newStringInput();
+        contactMap.findContact(search);
+    }
+
+
+    private static void doCase3(ContactMap contactMap) {
+        System.out.println();
+        System.out.println("Enter full name of contact you would like to edit:");
+        String name = newStringInput();
+        Contact c2 = contactMap.editContact(name);
+        int n = newIntInput();
+        contactMap.editContactDetails(c2,n);
+    }
+
+
+    private static void doCase6(ContactMap contactMap) {
         System.out.println();
         System.out.println("Which contact do you want to delete?");
         System.out.println("Please enter full name:");
-        Scanner newInput = new Scanner(System.in);
-        return newInput.nextLine();
+        String name2 = newStringInput();
+        contactMap.deleteContact(name2);
     }
 }
 
