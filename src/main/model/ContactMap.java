@@ -1,5 +1,9 @@
 package model;
 
+import model.exceptions.ContactAlreadyExistsException;
+import model.interfaces.ContactMapOperators;
+import model.interfaces.LoadAndSaveable;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -8,7 +12,7 @@ import java.util.*;
 
 public class ContactMap implements LoadAndSaveable, ContactMapOperators {
 
-    private Map<String, Contact> contactMap; // String = name of Contact
+    public Map<String, Contact> contactMap; // String = name of Contact
     private Map<String, Contact> searchResultMap = new HashMap<>();
     private Map<String, Contact> favoritesMap = new HashMap<>();
 
@@ -40,7 +44,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
     // MODIFIES: this
     // EFFECTS: adds a contact to contactMap
     public void add(Contact c) {
-        contactMap.put(c.name,c);
+        contactMap.put(c.getName(),c);
     }
 
 
@@ -62,8 +66,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
 
 
     // MODIFIES: contactfile.txt
-    // EFFECTS: loops through each Contact in contactMap and writes name, phone, address, and email
-    //          into contactfile.txt
+    // EFFECTS: loops through each Contact in contactMap and writes name, phone, address, and email into contactfile.txt
     //          each Contact object is a new line
     public void save(String fileName) throws IOException {
         PrintWriter writer = new PrintWriter(fileName);
@@ -94,7 +97,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
 
     // 2. FIND A CONTACT-----------------------------------------------------------------------------------------------
     // REQUIRES: user input n must equal 2
-    // EFFECTS: searches contacts for a specific RegularContact object and prints contact details
+    // EFFECTS: searches contacts for a specific Contact object and prints contact details
     public boolean findContact(String search) {
         for (Map.Entry<String, Contact> c : contactMap.entrySet()) {
             if (c.getKey().contains(search)) {
@@ -178,7 +181,8 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
         }
     }
 
-    private boolean addFavoriteOrRegular(String n, String p, String a, String e, Boolean favorite) {
+    private boolean addFavoriteOrRegular
+            (String n, String p, String a, String e, Boolean favorite) {
         try {
             if (favorite) {
                 Contact contact = new FavoriteContact(n, p, a, e, true);

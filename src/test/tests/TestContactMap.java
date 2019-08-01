@@ -1,3 +1,5 @@
+package tests;
+
 import model.Contact;
 import model.ContactMap;
 import model.FavoriteContact;
@@ -141,6 +143,8 @@ public class TestContactMap {
         cMap.addNewContact("Test Name2---604-707-9090---101 Testing Dr.---testing@gmail.com---false");
         cMap.addNewContact("Test Name3---604-707-9090---101 Testing Dr.---testing@gmail.com---true");
         cMap.addNewContact("Test Name4---604-707-9090---101 Testing Dr.---testing@gmail.com---false");
+        assertEquals(4, cMap.size());
+
 
         cMap.save("testfilesave.txt");
         assertTrue(file.length() > 0);

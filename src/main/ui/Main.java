@@ -48,7 +48,7 @@ public class Main {
     }
 
 
-    // EFFECTS: user input model and flow for main menu
+    // EFFECTS: user input main.model and flow for main menu
     private static void mainMenu(ContactMap contactMap) {
         printMenu();
         int n = input.nextInt();
@@ -74,26 +74,19 @@ public class Main {
 
     private static void switchLoop(ContactMap contactMap, int n) {
         switch (n) {
-            case 1:
-                doCase1(contactMap);
+            case 1: doCase1(contactMap);
                 break;
-            case 2:
-                doCase2(contactMap);
+            case 2: doCase2(contactMap);
                 break;
-            case 3:
-                doCase3(contactMap);
+            case 3: doCase3(contactMap);
                 break;
-            case 4:
-                contactMap.printFavorites();
+            case 4: contactMap.printFavorites();
                 break;
-            case 5:
-                contactMap.printAllContacts();
+            case 5: contactMap.printAllContacts();
                 break;
-            case 6:
-                doCase6(contactMap);
+            case 6: doCase6(contactMap);
                 break;
-            default:
-                System.out.println("Invalid input. Only digits 1-7 accepted.");
+            default: System.out.println("Invalid input. Only digits 1-7 accepted.");
         }
     }
 
@@ -113,7 +106,7 @@ public class Main {
         System.out.println("1.Yes");
         System.out.println("2.No");
         String favorite = newInput.nextLine();
-        return name+"---"+phone+"---"+address+"---"+email+"---"+favorite;
+        return name + "---" + phone + "---" + address + "---" + email + "---" + favorite;
     }
 
 

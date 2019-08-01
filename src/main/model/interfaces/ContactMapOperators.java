@@ -1,4 +1,7 @@
-package model;
+package model.interfaces;
+
+
+import model.Contact;
 
 public interface ContactMapOperators {
     int size();

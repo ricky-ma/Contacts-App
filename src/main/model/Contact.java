@@ -1,35 +1,21 @@
 package model;
 
+import model.exceptions.InvalidInputException;
+
 import java.util.Objects;
 import java.util.Scanner;
 
 
 public abstract class Contact {
     // variable initializations
-    public String name;
-    public String phone;
-    public String address;
-    public String email;
-    public boolean favorite;
+    private String name;
+    private String phone;
+    private String address;
+    private String email;
+    private boolean favorite;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Contact contact = (Contact) o;
-        return favorite == contact.favorite &&
-                name.equals(contact.name) &&
-                phone.equals(contact.phone) &&
-                address.equals(contact.address) &&
-                email.equals(contact.email);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, phone, address, email, favorite);
-    }
-
-    protected Contact(String name, String phone, String address, String email, boolean favorite) {
+    public Contact(String name, String phone, String address, String email, boolean favorite) {
         this.name = name;
         this.phone = phone;
         this.address = address;
@@ -78,6 +64,24 @@ public abstract class Contact {
 
     public boolean getFavorite() {
         return favorite;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contact contact = (Contact) o;
+        return favorite == contact.favorite &&
+                name.equals(contact.name) &&
+                phone.equals(contact.phone) &&
+                address.equals(contact.address) &&
+                email.equals(contact.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, phone, address, email, favorite);
     }
 
 
@@ -141,7 +145,7 @@ public abstract class Contact {
 
     // MODIFIES: name of a contact
     // EFFECT: let user change name of a contact
-    public void editContactName(Contact c) {
+    private void editContactName(Contact c) {
         Scanner newNewInput = new Scanner(System.in);
         System.out.println();
         System.out.println("Name: ");
@@ -157,7 +161,7 @@ public abstract class Contact {
 
     // MODIFIES: phone of a contact
     // EFFECT: let user change phone of a contact
-    public void editContactPhone(Contact c) {
+    private void editContactPhone(Contact c) {
         Scanner newNewInput = new Scanner(System.in);
         System.out.println();
         System.out.println("Phone: ");
@@ -173,7 +177,7 @@ public abstract class Contact {
 
     // MODIFIES: address of a contact
     // EFFECT: let user change address of a contact
-    public void editContactAddress(Contact c) {
+    private void editContactAddress(Contact c) {
         Scanner newNewInput = new Scanner(System.in);
         System.out.println();
         System.out.println("Address: ");
@@ -184,7 +188,7 @@ public abstract class Contact {
 
     // MODIFIES: email of a contact
     // EFFECT: let user change email of a contact
-    public void editContactEmail(Contact c) {
+    private void editContactEmail(Contact c) {
         Scanner newNewInput = new Scanner(System.in);
         System.out.println();
         System.out.println("Email: ");
@@ -200,7 +204,7 @@ public abstract class Contact {
 
     // MODIFIES: favorite state of a contact
     // EFFECT: flips favorite state of a contact
-    public void editContactFavorite(Contact c) {
+    private void editContactFavorite(Contact c) {
         if (c.getFavorite()) {
             this.favorite = false;
             System.out.println("Contact unfavorited.");

@@ -1,3 +1,5 @@
+package tests;
+
 import model.Contact;
 import model.FavoriteContact;
 import model.RegularContact;
@@ -61,20 +63,20 @@ public class TestContact {
         fc.setPhone("911");
         fc.setAddress("1600 Pennsylvania Ave. Washington DC");
         fc.setEmail("johnsmith@gmail.com");
-        assertEquals(fc.getName(),fc.name);
-        assertEquals(fc.getPhone(),fc.phone);
-        assertEquals(fc.getAddress(),fc.address);
-        assertEquals(fc.getEmail(),fc.email);
+        assertEquals(fc.getName(),fc.getName());
+        assertEquals(fc.getPhone(),fc.getPhone());
+        assertEquals(fc.getAddress(),fc.getAddress());
+        assertEquals(fc.getEmail(),fc.getEmail());
         assertTrue(fc.getFavorite());
 
         rc1.setName("John Smith");
         rc1.setPhone("911");
         rc1.setAddress("1600 Pennsylvania Ave. Washington DC");
         rc1.setEmail("johnsmith@gmail.com");
-        assertEquals(rc1.getName(),rc1.name);
-        assertEquals(rc1.getPhone(),rc1.phone);
-        assertEquals(rc1.getAddress(),rc1.address);
-        assertEquals(rc1.getEmail(),rc1.email);
+        assertEquals(rc1.getName(),rc1.getName());
+        assertEquals(rc1.getPhone(),rc1.getPhone());
+        assertEquals(rc1.getAddress(),rc1.getAddress());
+        assertEquals(rc1.getEmail(),rc1.getEmail());
         assertFalse(rc1.getFavorite());
     }
 
@@ -109,96 +111,37 @@ public class TestContact {
         rc1.editContactDetails(rc1,4);
 
         rc1.editContactDetails(rc1,5);
+        assertTrue(rc1.getFavorite());
+        rc1.editContactDetails(rc1,5);
+        assertFalse(rc1.getFavorite());
 
-
-        assertEquals("Ricky Ma", rc1.name);
-        assertEquals("909-569-9045", rc1.phone);
-        assertEquals("mr.rickyma@gmail.com", rc1.email);
-        assertEquals("101 Testing Street, Vancouver BC", rc1.address);
-        assertTrue(rc1.favorite);
+        assertEquals("Ricky Ma", rc1.getName());
+        assertEquals("909-569-9045", rc1.getPhone());
+        assertEquals("mr.rickyma@gmail.com", rc1.getEmail());
+        assertEquals("101 Testing Street, Vancouver BC", rc1.getAddress());
     }
 
     @Test
-    void testEditContactValidName() {
-        String input = "Ricky Ma";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-        rc1.editContactName(rc1);
-
-        assertEquals("Ricky Ma", rc1.name);
-    }
-
-    @Test
-    void testEditContactInvalidName() {
+    void testEditContactDetailsInvalid() {
         String input = "12345";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
-        rc1.editContactName(rc1);
+        rc1.editContactDetails(rc1,1);
 
-        assertEquals("John Smith", rc1.name);
-    }
+        String input2 = "letters";
+        InputStream in2 = new ByteArrayInputStream(input2.getBytes());
+        System.setIn(in2);
+        rc1.editContactDetails(rc1,2);
 
-    @Test
-    void testEditContactValidPhone() {
-        String input = "909-569-9045";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-        rc1.editContactPhone(rc1);
+        String input3 = "invalidEmail321";
+        InputStream in3 = new ByteArrayInputStream(input3.getBytes());
+        System.setIn(in3);
+        rc1.editContactDetails(rc1,4);
 
-        assertEquals("909-569-9045", rc1.phone);
-    }
 
-    @Test
-    void testEditContactInvalidPhone() {
-        String input = "letters";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-        rc1.editContactPhone(rc1);
-
-        assertEquals("911", rc1.phone);
-    }
-
-    @Test
-    void testEditContactValidEmail() {
-        String input = "mr.rickyma@gmail.com";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-        rc1.editContactEmail(rc1);
-
-        assertEquals("mr.rickyma@gmail.com", rc1.email);
-    }
-
-    @Test
-    void testEditContactInvalidEmail() {
-        String input = "invalidEmail321";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-        rc1.editContactEmail(rc1);
-
-        String out = outContent.toString();
-
-        assertEquals("johnsmith@gmail.com", rc1.email);
-    }
-
-    @Test
-    void testEditContactAddress() {
-        String input = "101 Testing Street, Vancouver BC";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-        rc1.editContactAddress(rc1);
-
-        assertEquals("101 Testing Street, Vancouver BC", rc1.address);
-    }
-
-    @Test
-    void testEditContactFavorite() {
-        assertFalse(rc2.favorite);
-        rc2.editContactFavorite(rc2);
-        assertTrue(rc2.favorite);
-
-        assertTrue(fc.favorite);
-        fc.editContactFavorite(fc);
-        assertFalse(fc.favorite);
+        assertEquals("John Smith", rc1.getName());
+        assertEquals("911", rc1.getPhone());
+        assertEquals("johnsmith@gmail.com", rc1.getEmail());
     }
 
     @Test
