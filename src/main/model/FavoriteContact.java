@@ -7,7 +7,7 @@ public class FavoriteContact extends Contact {
     private List<Contact> contacts;
 
     // EFFECTS: constructs new contact object
-    public FavoriteContact(String name, String phone, String address, String email, boolean favorite){
+    public FavoriteContact(String name, String phone, String address, String email, boolean favorite) {
         super(name, phone, address, email, favorite);
     }
 

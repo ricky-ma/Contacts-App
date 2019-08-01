@@ -69,14 +69,18 @@ public abstract class Contact {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Contact contact = (Contact) o;
-        return favorite == contact.favorite &&
-                name.equals(contact.name) &&
-                phone.equals(contact.phone) &&
-                address.equals(contact.address) &&
-                email.equals(contact.email);
+        return favorite == contact.favorite
+                && name.equals(contact.name)
+                && phone.equals(contact.phone)
+                && address.equals(contact.address)
+                && email.equals(contact.email);
     }
 
     @Override

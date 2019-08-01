@@ -181,8 +181,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
         }
     }
 
-    private boolean addFavoriteOrRegular
-            (String n, String p, String a, String e, Boolean favorite) {
+    private boolean addFavoriteOrRegular(String n, String p, String a, String e, Boolean favorite) {
         try {
             if (favorite) {
                 Contact contact = new FavoriteContact(n, p, a, e, true);
