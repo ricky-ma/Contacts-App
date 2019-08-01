@@ -3,6 +3,6 @@ package model;
 import java.io.IOException;
 
 public interface LoadAndSaveable {
-    void load() throws IOException;
-    void save() throws IOException;
+    void load(String fileName) throws IOException;
+    void save(String fileName) throws IOException;
 }

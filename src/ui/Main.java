@@ -42,18 +42,33 @@ public class Main {
     // EFFECTS: runs the program
     public static void main(String[] args) throws IOException {
         ContactMap contactMap = new ContactMap();
-        contactMap.run();
+        contactMap.load("contactfile.txt");
+        mainMenu(contactMap);
+        contactMap.save("contactfile.txt");
     }
 
 
     // EFFECTS: user input model and flow for main menu
-    public static void mainMenu(ContactMap contactMap) {
-        int n2 = input.nextInt();
-        while (n2 != 7) {
-            switchLoop(contactMap, n2);
-            contactMap.printMenu();
-            n2 = input.nextInt();
+    private static void mainMenu(ContactMap contactMap) {
+        printMenu();
+        int n = input.nextInt();
+        while (n != 7) {
+            switchLoop(contactMap, n);
+            System.out.println();
+            printMenu();
+            n = input.nextInt();
         }
+    }
+
+    private static void printMenu() {
+        System.out.println("What would you like to do?");
+        System.out.println("1. Add a contact.");
+        System.out.println("2. Find a contact.");
+        System.out.println("3. Edit a contact.");
+        System.out.println("4. View favorite contacts.");
+        System.out.println("5. View all contacts.");
+        System.out.println("6. Delete a contact.");
+        System.out.println("7. Exit.");
     }
 
 
@@ -78,12 +93,12 @@ public class Main {
                 doCase6(contactMap);
                 break;
             default:
-                System.out.println("Invalid input. Only digits 1-6 accepted.");
+                System.out.println("Invalid input. Only digits 1-7 accepted.");
         }
     }
 
 
-    private static Contact getNewContactInfoUI() {
+    private static String getNewContactInfoUI() {
         System.out.println();
         Scanner newInput = new Scanner(System.in);
         System.out.println("Name: ");
@@ -97,8 +112,8 @@ public class Main {
         System.out.println("Favorite?");
         System.out.println("1.Yes");
         System.out.println("2.No");
-        int n = newInput.nextInt();
-        return ContactMap.favoriteOrRegular(n, name, phone, address, email);
+        String favorite = newInput.nextLine();
+        return name+"---"+phone+"---"+address+"---"+email+"---"+favorite;
     }
 
 
@@ -115,8 +130,8 @@ public class Main {
 
 
     private static void doCase1(ContactMap contactMap) {
-        Contact c = getNewContactInfoUI();
-        contactMap.addNewContact(c);
+        String contactInfo = getNewContactInfoUI();
+        contactMap.addNewContact(contactInfo);
     }
 
 
@@ -134,7 +149,7 @@ public class Main {
         String name = newStringInput();
         Contact c2 = contactMap.editContact(name);
         int n = newIntInput();
-        contactMap.editContactDetails(c2,n);
+        c2.editContactDetails(c2,n);
     }
 
 

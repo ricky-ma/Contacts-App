@@ -17,7 +17,7 @@ public class FavoriteContact extends Contact {
 //        }
 //    }
 
-//    public void addContact(RegularContact c) {
+//    protected void addContact(RegularContact c) {
 //        if (!contacts.contains(c)) {
 //            contacts.add(c);
 //            c.addFavorite(this);

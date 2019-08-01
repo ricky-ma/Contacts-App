@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,7 +50,7 @@ public class TestContact {
     }
 
     @AfterEach
-    public void restoreStreams() {
+    void restoreStreams() {
         System.setOut(originalOut);
         System.setErr(originalErr);
     }
@@ -83,6 +84,38 @@ public class TestContact {
         assertFalse(rc2.checkInput());
         assertFalse(rc3.checkInput());
         assertFalse(rc4.checkInput());
+    }
+
+    @Test
+    void testEditContactDetails() {
+        String input = "Ricky Ma";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+        rc1.editContactDetails(rc1,1);
+
+        String input2 = "909-569-9045";
+        InputStream in2 = new ByteArrayInputStream(input2.getBytes());
+        System.setIn(in2);
+        rc1.editContactDetails(rc1,2);
+
+        String input3 = "101 Testing Street, Vancouver BC";
+        InputStream in3 = new ByteArrayInputStream(input3.getBytes());
+        System.setIn(in3);
+        rc1.editContactDetails(rc1,3);
+
+        String input4 = "mr.rickyma@gmail.com";
+        InputStream in4 = new ByteArrayInputStream(input4.getBytes());
+        System.setIn(in4);
+        rc1.editContactDetails(rc1,4);
+
+        rc1.editContactDetails(rc1,5);
+
+
+        assertEquals("Ricky Ma", rc1.name);
+        assertEquals("909-569-9045", rc1.phone);
+        assertEquals("mr.rickyma@gmail.com", rc1.email);
+        assertEquals("101 Testing Street, Vancouver BC", rc1.address);
+        assertTrue(rc1.favorite);
     }
 
     @Test
@@ -121,8 +154,6 @@ public class TestContact {
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
         rc1.editContactPhone(rc1);
-
-        String out = outContent.toString();
 
         assertEquals("911", rc1.phone);
     }
@@ -175,5 +206,11 @@ public class TestContact {
         RegularContact rc1a = new RegularContact(n, p, a, e, false);
         assertEquals(rc1,rc1a);
         assertNotEquals(rc1,rc2);
+    }
+
+    @Test
+    void testHashCode() {
+        assertEquals(rc1.hashCode(), Objects.hash(n, p, a, e, false));
+        assertNotEquals(rc1.hashCode(), Objects.hash(n, p, a, e, true));
     }
 }

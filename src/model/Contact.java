@@ -29,7 +29,7 @@ public abstract class Contact {
         return Objects.hash(name, phone, address, email, favorite);
     }
 
-    public Contact(String name, String phone, String address, String email, boolean favorite) {
+    protected Contact(String name, String phone, String address, String email, boolean favorite) {
         this.name = name;
         this.phone = phone;
         this.address = address;
@@ -90,6 +90,21 @@ public abstract class Contact {
         } catch (InvalidInputException e) {
             System.out.println("Invalid input!");
             return false;
+        }
+    }
+
+
+    public void editContactDetails(Contact c, int n) {
+        if (n == 1) {
+            c.editContactName(c);
+        } else if (n == 2) {
+            c.editContactPhone(c);
+        } else if (n == 3) {
+            c.editContactAddress(c);
+        } else if (n == 4) {
+            c.editContactEmail(c);
+        } else {
+            c.editContactFavorite(c);
         }
     }
 

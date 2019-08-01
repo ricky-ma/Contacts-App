@@ -1,13 +1,14 @@
-import model.ContactAlreadyExistsException;
+import model.Contact;
 import model.ContactMap;
 import model.FavoriteContact;
 import model.RegularContact;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,80 +31,133 @@ public class TestContactMap {
     @BeforeEach
     void beforeEachTest() {
         cMap = new ContactMap();
-        cMap.add(c1);
-        cMap.add(c2);
-        cMap.add(c3);
     }
+
 
     @Test
     void testContactMapOperators() {
+        cMap.add(c1);
+        cMap.add(c2);
+        cMap.add(c3);
         assertEquals(3,cMap.size());
         assertFalse(cMap.isEmpty());
         assertTrue(cMap.contains(c1));
         assertEquals(c3,cMap.get("Stormzy"));
     }
 
+
     @Test
-    void testRun() throws IOException {
-        String input = "6";
-        InputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-        cMap.run();
+    void testAddAContact() {
+        cMap.addNewContact
+                ("John Smith---911---1600 Pennsylvania Ave.---jsmith@gmail.com---true");
+        assertTrue(cMap.contains(c1));
+        assertFalse(cMap.addNewContact
+                ("John Smith---911---1600 Pennsylvania Ave.---jsmith@gmail.com---true"));
+
+        assertFalse(cMap.contains(c4));
+        cMap.addNewContact
+                ("Test Name---1234567890---193 Testing Rd.---testing@yahoo.com---false");
+        assertTrue(cMap.contains(c1));
+        assertFalse(cMap.addNewContact
+                ("Test Name---1234567890---193 Testing Rd.---testing@yahoo.com---false"));
     }
 
-//    @Test
-//    void testAddAContact() {
-//        String input = "Test Name\n1234567890\n101 Testing Street\ntesting@gmail.com\nfalse";
-//        InputStream in = new ByteArrayInputStream(input.getBytes());
-//        System.setIn(in);
-//        cMap.addNewContact();
-//    }
 
     @Test
     void testFindAContact() {
+        assertFalse(cMap.findContact("John Smith"));
+        cMap.add(c1);
+        assertTrue(cMap.findContact("John Smith"));
     }
 
-    @Test
-    void testEditAContact() {
-
-    }
 
     @Test
     void testPrintFavorites() {
+        assertTrue(cMap.printFavorites());
     }
 
 
     @Test
     void testPrintContacts() {
+        assertFalse(cMap.printAllContacts());
+
+        cMap.add(c1);
+        cMap.add(c2);
+        cMap.add(c3);
         assertTrue(cMap.printAllContacts());
     }
 
+
     @Test
     void testDeleteContact() {
+        assertFalse(cMap.deleteContact("John Smith"));
+
+        cMap.add(c1);
+        assertTrue(cMap.deleteContact("John Smith"));
+        assertFalse(cMap.contains(c1));
     }
 
-    @Test
-    void testFavoriteOrRegular() {
-        assertTrue(ContactMap.favoriteOrRegular(1,"name","123","address","m@.com").favorite);
-        assertFalse(ContactMap.favoriteOrRegular(2,"name","123","address","m@.com").favorite);
 
-        assertNull(ContactMap.favoriteOrRegular(1,"invalid123","123","address","m@.com"));
-        assertNull(ContactMap.favoriteOrRegular(2,"invalid123","123","address","m@.com"));
+    @Test
+    void testEditContact() {
+        assertNull(cMap.editContact("John Smith"));
+        cMap.add(c1);
+        assertEquals(c1,cMap.editContact("John Smith"));
     }
 
+
     @Test
-    void testDoesContactExist() {
-        try {
-            cMap.doesContactExist(c4);
-        } catch (ContactAlreadyExistsException e) {
-            fail("Exception should not have been thrown!");
+    void testLoad() throws IOException {
+        Contact test1 = new RegularContact("Test Name1","604-707-9090",
+                "101 Testing Dr.","testing@gmail.com", true);
+        Contact test2 = new RegularContact("Test Name2","604-707-9090",
+                "101 Testing Dr.","testing@gmail.com", false);
+        Contact test3 = new RegularContact("Test Name3","604-707-9090",
+                "101 Testing Dr.","testing@gmail.com", true);
+        Contact test4 = new RegularContact("Test Name4","604-707-9090",
+                "101 Testing Dr.","testing@gmail.com", false);
+
+        cMap.load("testfileload.txt");
+        assertTrue(cMap.contains(test1));
+        assertTrue(cMap.contains(test2));
+        assertTrue(cMap.contains(test3));
+        assertTrue(cMap.contains(test4));
+    }
+
+
+    @Test
+    void testSave() throws IOException {
+        String path = "C:\\Users\\mrric\\IdeaProjects\\project_rickyma\\testfilesave.txt";
+        String expectedContent =
+                "Test Name1---604-707-9090---101 Testing Dr.---testing@gmail.com---true\n" +
+                "Test Name2---604-707-9090---101 Testing Dr.---testing@gmail.com---false\n" +
+                "Test Name3---604-707-9090---101 Testing Dr.---testing@gmail.com---true\n" +
+                "Test Name4---604-707-9090---101 Testing Dr.---testing@gmail.com---false";
+        String actualContent = readAllBytesJava7(path);
+
+        File file = new File("C:\\Users\\mrric\\IdeaProjects\\project_rickyma\\testfilesave.txt");
+
+        cMap.addNewContact("Test Name1---604-707-9090---101 Testing Dr.---testing@gmail.com---true");
+        cMap.addNewContact("Test Name2---604-707-9090---101 Testing Dr.---testing@gmail.com---false");
+        cMap.addNewContact("Test Name3---604-707-9090---101 Testing Dr.---testing@gmail.com---true");
+        cMap.addNewContact("Test Name4---604-707-9090---101 Testing Dr.---testing@gmail.com---false");
+
+        cMap.save("testfilesave.txt");
+        assertTrue(file.length() > 0);
+        assertEquals(expectedContent, actualContent);
+    }
+
+    private static String readAllBytesJava7(String filePath)
+    {
+        String content = "";
+        try
+        {
+            content = new String ( Files.readAllBytes( Paths.get(filePath) ) );
         }
-        cMap.add(c4);
-        try {
-            cMap.doesContactExist(c4);
-            fail("Exception should have been thrown!");
-        } catch (ContactAlreadyExistsException e) {
-            // expected
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
+        return content;
     }
 }
