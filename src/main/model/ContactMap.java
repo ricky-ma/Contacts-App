@@ -16,10 +16,27 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
     private Map<String, Contact> searchResultMap = new HashMap<>();
     private Map<String, Contact> favoritesMap = new HashMap<>();
 
+    public Map<String, Contact> getSearchResultMap() {
+        return searchResultMap;
+    }
+
+    public Map<String, Contact> getFavoritesMap() {
+        return favoritesMap;
+    }
+
+
+    public Map<String, Contact> getContactMap() {
+        return contactMap;
+    }
 
     // EFFECTS: constructs a new contactMap for contacts
     public ContactMap() {
         contactMap = new HashMap<>();
+        try {
+            load("contactfile.txt");
+        } catch (IOException e) {
+            //
+        }
     }
 
 
