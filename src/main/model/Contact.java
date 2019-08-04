@@ -76,11 +76,7 @@ public abstract class Contact {
             return false;
         }
         Contact contact = (Contact) o;
-        return favorite == contact.favorite
-                && name.equals(contact.name)
-                && phone.equals(contact.phone)
-                && address.equals(contact.address)
-                && email.equals(contact.email);
+        return name.equals(contact.name);
     }
 
     @Override

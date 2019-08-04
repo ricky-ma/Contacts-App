@@ -12,18 +12,13 @@ import java.util.*;
 
 public class ContactMap implements LoadAndSaveable, ContactMapOperators {
 
-    public Map<String, Contact> contactMap; // String = name of Contact
+    private Map<String, Contact> contactMap; // String = name of Contact
     private Map<String, Contact> searchResultMap = new HashMap<>();
     private Map<String, Contact> favoritesMap = new HashMap<>();
-
-    public Map<String, Contact> getSearchResultMap() {
-        return searchResultMap;
-    }
 
     public Map<String, Contact> getFavoritesMap() {
         return favoritesMap;
     }
-
 
     public Map<String, Contact> getContactMap() {
         return contactMap;
@@ -77,7 +72,11 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
     public void load(String fileName) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get(fileName));
         for (String line : lines) {
-            addNewContact(line);
+            try {
+                addNewContact(line);
+            } catch (ContactAlreadyExistsException e) {
+                // skips contact
+            }
         }
     }
 
@@ -102,14 +101,14 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
     // REQUIRES: user input n must equal 1
     // EFFECTS: check if contact already exists, throw ContactAlreadyExistsException if true
     //          add contact to contacts if false
-    public boolean addNewContact(String contactInfo) {
+    public void addNewContact(String contactInfo) throws ContactAlreadyExistsException {
         ArrayList<String> partsOfLine = splitOnDashes(contactInfo);
         String name = partsOfLine.get(0);
         String phone = partsOfLine.get(1);
         String address = partsOfLine.get(2);
         String email = partsOfLine.get(3);
         boolean favorite = Boolean.parseBoolean(partsOfLine.get(4));
-        return addFavoriteOrRegular(name, phone, address, email, favorite);
+        addFavoriteOrRegular(name, phone, address, email, favorite);
     }
 
     // 2. FIND A CONTACT-----------------------------------------------------------------------------------------------
@@ -135,14 +134,14 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
     // 3. EDIT CONTACT-------------------------------------------------------------------------------------------------
     // REQUIRES: user input n must equal 3
     // EFFECTS: edit contact details
-    public Contact editContact(String name) {
-        try {
-            printContactToEdit(name);
-            return contactMap.get(name);
-        } catch (NullPointerException e) {
-            System.out.println("No contact found.");
-        }
-        return null;
+    public void editContact(String contactInfo) {
+        ArrayList<String> partsOfLine = splitOnDashes(contactInfo);
+        String name = partsOfLine.get(0);
+        String phone = partsOfLine.get(1);
+        String address = partsOfLine.get(2);
+        String email = partsOfLine.get(3);
+        boolean favorite = Boolean.parseBoolean(partsOfLine.get(4));
+        editFavoriteOrRegular(name, phone, address, email, favorite);
     }
 
     // 4. VIEW FAVORITES ----------------------------------------------------------------------------------------------
@@ -198,23 +197,31 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
         }
     }
 
-    private boolean addFavoriteOrRegular(String n, String p, String a, String e, Boolean favorite) {
-        try {
-            if (favorite) {
-                Contact contact = new FavoriteContact(n, p, a, e, true);
-                doesContactExist(contact);
-                contactMap.put(n,contact);
-                favoritesMap.put(n,contact);
-            } else {
-                Contact contact = new RegularContact(n, p, a, e, false);
-                doesContactExist(contact);
-                contactMap.put(n,contact);
-            }
-            return true;
-        } catch (ContactAlreadyExistsException exception) {
-            System.out.println("Contact already exists!");
-            return false;
+    private boolean addFavoriteOrRegular(String n, String p, String a, String e, Boolean favorite)
+    throws ContactAlreadyExistsException {
+        if (favorite) {
+            Contact contact = new FavoriteContact(n, p, a, e, true);
+            doesContactExist(contact);
+            contactMap.put(n,contact);
+            favoritesMap.put(n,contact);
+        } else {
+            Contact contact = new RegularContact(n, p, a, e, false);
+            doesContactExist(contact);
+            contactMap.put(n,contact);
         }
+        return true;
+    }
+
+    private boolean editFavoriteOrRegular(String n, String p, String a, String e, Boolean favorite) {
+        if (favorite) {
+            Contact contact = new FavoriteContact(n, p, a, e, true);
+            contactMap.put(n,contact);
+            favoritesMap.put(n,contact);
+        } else {
+            Contact contact = new RegularContact(n, p, a, e, false);
+            contactMap.put(n,contact);
+        }
+        return true;
     }
 
     private static void printContacts(Map<String, Contact> contactMap) {
