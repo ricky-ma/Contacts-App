@@ -1,8 +1,8 @@
 package model;
 
 import model.exceptions.ContactAlreadyExistsException;
-import model.interfaces.ContactMapOperators;
-import model.interfaces.LoadAndSaveable;
+import model.interfaces.Observable;
+import model.interfaces.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,28 +10,32 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class ContactMap implements LoadAndSaveable, ContactMapOperators {
+public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observable {
 
     private Map<String, Contact> contactMap; // String = name of Contact
-    private Map<String, Contact> searchResultMap = new HashMap<>();
     private Map<String, Contact> favoritesMap = new HashMap<>();
+    private List<ContactMapObserver> observers = new ArrayList<>();
 
-    public Map<String, Contact> getFavoritesMap() {
-        return favoritesMap;
+    public void setContactMap(Map<String, Contact> contactMap) {
+        this.contactMap = contactMap;
+    }
+
+    public void setFavoritesMap(Map<String, Contact> favoritesMap) {
+        this.favoritesMap = favoritesMap;
     }
 
     public Map<String, Contact> getContactMap() {
         return contactMap;
     }
 
+    public Map<String, Contact> getFavoritesMap() {
+        return favoritesMap;
+    }
+
+
     // EFFECTS: constructs a new contactMap for contacts
     public ContactMap() {
         contactMap = new HashMap<>();
-        try {
-            load("contactfile.txt");
-        } catch (IOException e) {
-            //
-        }
     }
 
 
@@ -66,6 +70,11 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
     }
 
 
+    public void addObserver(ContactMapObserver o) {
+        observers.add(o);
+    }
+
+
     // MODIFIES: contacts
     // EFFECTS: gets parameters of each contact from contactfile.txt and creates a new RegularContact object
     //          adds newly created contact to contactMap
@@ -75,7 +84,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
             try {
                 addNewContact(line);
             } catch (ContactAlreadyExistsException e) {
-                // skips contact
+                // skips that contact
             }
         }
     }
@@ -97,7 +106,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
         writer.close();
     }
 
-    // 1. ADD A CONTACT------------------------------------------------------------------------------------------------
+    // ADD A CONTACT------------------------------------------------------------------------------------------------
     // REQUIRES: user input n must equal 1
     // EFFECTS: check if contact already exists, throw ContactAlreadyExistsException if true
     //          add contact to contacts if false
@@ -111,28 +120,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
         addFavoriteOrRegular(name, phone, address, email, favorite);
     }
 
-    // 2. FIND A CONTACT-----------------------------------------------------------------------------------------------
-    // REQUIRES: user input n must equal 2
-    // EFFECTS: searches contacts for a specific Contact object and prints contact details
-    public boolean findContact(String search) {
-        for (Map.Entry<String, Contact> c : contactMap.entrySet()) {
-            if (c.getKey().contains(search)) {
-                searchResultMap.put(c.getKey(),c.getValue());
-            }
-        }
-        if (searchResultMap.size() == 0) {
-            System.out.println();
-            System.out.println("No contact found.");
-            return false;
-        } else {
-            printContacts(searchResultMap);
-        }
-        searchResultMap.clear();
-        return true;
-    }
-
-    // 3. EDIT CONTACT-------------------------------------------------------------------------------------------------
-    // REQUIRES: user input n must equal 3
+    // EDIT CONTACT-------------------------------------------------------------------------------------------------
     // EFFECTS: edit contact details
     public void editContact(String contactInfo) {
         ArrayList<String> partsOfLine = splitOnDashes(contactInfo);
@@ -144,43 +132,22 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
         editFavoriteOrRegular(name, phone, address, email, favorite);
     }
 
-    // 4. VIEW FAVORITES ----------------------------------------------------------------------------------------------
-    // REQUIRES: user input n must equal 4
-    // EFFECTS: prints contact list into console, showing all details of each contact
-    public boolean printFavorites() {
-        printContacts(favoritesMap);
-        return true;
-    }
-
-    // 5. VIEW ALL CONTACTS--------------------------------------------------------------------------------------------
-    // REQUIRES: user input n must equal 5
-    // EFFECTS: prints contact list into console if contacts.size != 0, showing all details of each contact
-    public boolean printAllContacts() {
-        if (contactMap.size() == 0) {
-            System.out.println("No contacts!");
-            return false;
-        } else {
-            printContacts(contactMap);
-            return true;
-        }
-    }
-
-    // 6. DELETE CONTACT-----------------------------------------------------------------------------------------------
-    // REQUIRES: user input n must equal 6
+    // DELETE CONTACT-----------------------------------------------------------------------------------------------
     // EFFECTS: deletes a contact from contacts
     public boolean deleteContact(String name) {
-        if (contactMap.containsKey(name)) {
-            contactMap.remove(name);
-            System.out.println("Contact deleted.");
+        if (contactMap.containsKey(name) || favoritesMap.containsKey(name)) {
+            if (contactMap.get(name).getFavorite()) {
+                contactMap.remove(name);
+                favoritesMap.remove(name);
+                notifyObservers(name);
+            } else {
+                contactMap.remove(name);
+                notifyObservers(name);
+            }
             return true;
-        } else {
-            System.out.println("Contact not found. No contact was deleted.");
-            return false;
         }
+        return false;
     }
-
-
-
 
     // PRIVATE METHODS--------------------------------------------------------------------------------------------------
 
@@ -204,10 +171,12 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
             doesContactExist(contact);
             contactMap.put(n,contact);
             favoritesMap.put(n,contact);
+            notifyObservers(n);
         } else {
             Contact contact = new RegularContact(n, p, a, e, false);
             doesContactExist(contact);
             contactMap.put(n,contact);
+            notifyObservers(n);
         }
         return true;
     }
@@ -217,33 +186,18 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators {
             Contact contact = new FavoriteContact(n, p, a, e, true);
             contactMap.put(n,contact);
             favoritesMap.put(n,contact);
+            notifyObservers(n);
         } else {
             Contact contact = new RegularContact(n, p, a, e, false);
             contactMap.put(n,contact);
+            notifyObservers(n);
         }
         return true;
     }
 
-    private static void printContacts(Map<String, Contact> contactMap) {
-        for (Map.Entry<String, Contact> c : contactMap.entrySet()) {
-            System.out.println();
-            System.out.println("Name: " + c.getValue().getName());
-            System.out.println("Phone: " + c.getValue().getPhone());
-            System.out.println("Address: " + c.getValue().getAddress());
-            System.out.println("Email: " + c.getValue().getEmail());
-            System.out.println("Favorite: " + c.getValue().getFavorite());
+    private void notifyObservers(String name) {
+        for (ContactMapObserver o : observers) {
+            o.updateModel(name);
         }
-    }
-
-    // EFFECTS: prints user-selected contact from searchResults
-    private void printContactToEdit(String name) {
-        System.out.println();
-        System.out.println("1. Name: " + contactMap.get(name).getName());
-        System.out.println("2. Phone: " + contactMap.get(name).getPhone());
-        System.out.println("3. Address: " + contactMap.get(name).getAddress());
-        System.out.println("4. Email: " + contactMap.get(name).getEmail());
-        System.out.println("5. Favorite: " + contactMap.get(name).getFavorite());
-        System.out.println();
-        System.out.println("What would you like to edit?");
     }
 }

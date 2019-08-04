@@ -16,19 +16,19 @@ import javafx.stage.Stage;
 import model.Contact;
 import model.ContactMap;
 import model.exceptions.ContactAlreadyExistsException;
+import model.interfaces.ContactMapObserver;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class Main extends Application {
+public class Main extends Application implements ContactMapObserver {
 
-    private ContactMap contactMap = new ContactMap();
+    private ContactMap contactMap;
     private Stage mainStage;
-    private ObservableList<String> items = FXCollections.observableArrayList();
+//    private ObservableList<String> items = FXCollections.observableArrayList();
 
     private ListView<String> contactList = new ListView<>();
     private ListView<String> favoritesList = new ListView<>();
-
 
     // EFFECTS: runs the program
     public static void main(String[] args) {
@@ -38,9 +38,20 @@ public class Main extends Application {
 
     public void start(Stage primaryStage) {
         this.mainStage = primaryStage;
+        createAndPopulateModel();
         primaryStage.setTitle("Contax");
         displayAllContacts();
         primaryStage.show();
+    }
+
+    private void createAndPopulateModel() {
+        contactMap = new ContactMap();
+        try {
+            contactMap.load("contactfile.txt");
+        } catch (IOException e) {
+            //
+        }
+        contactMap.addObserver(this);
     }
 
     @Override
@@ -50,6 +61,11 @@ public class Main extends Application {
         } catch (IOException e) {
             System.out.println("File not saved.");
         }
+    }
+
+    public void updateModel(String name) {
+        updateListView(contactMap.getContactMap(), contactList);
+        updateListView(contactMap.getFavoritesMap(), favoritesList);
     }
 
     private void setSceneTitle(GridPane grid, String s, FontWeight bold, int i) {
@@ -87,7 +103,7 @@ public class Main extends Application {
 
     private Button backButton() {
         Button backBtn = new Button("BACK TO CONTACTS");
-        backBtn.setOnAction(event -> start(mainStage));
+        backBtn.setOnAction(event -> displayAllContacts());
         return backBtn;
     }
 
@@ -249,7 +265,7 @@ public class Main extends Application {
         grid.add(okBtn, 0, 1, 1, 1);
         okBtn.setOnAction(event -> {
             stage.close();
-            start(mainStage);
+            displayAllContacts();
         });
         stage.show();
     }
@@ -263,11 +279,7 @@ public class Main extends Application {
         Scene scene = new Scene(grid, 400, 600);
         contactList.getSelectionModel().clearSelection();
 
-        ObservableList<String> entries = FXCollections.observableArrayList();
-        for (Contact c : contactMap.getContactMap().values()) {
-            entries.add(c.getName());
-        }
-        contactList.setItems(entries);
+        updateListView(contactMap.getContactMap(), contactList);
 
         grid.add(addButton(), 0, 1, 1, 1);
         grid.add(favoritesButton(), 1, 1, 1, 1);
@@ -287,11 +299,7 @@ public class Main extends Application {
         Scene scene = new Scene(grid, 400, 600);
         favoritesList.getSelectionModel().clearSelection();
 
-        ObservableList<String> entries = FXCollections.observableArrayList();
-        for (Contact c : contactMap.getFavoritesMap().values()) {
-            entries.add(c.getName());
-        }
-        favoritesList.setItems(entries);
+        updateListView(contactMap.getFavoritesMap(), favoritesList);
 
         grid.add(addButton(), 0, 1, 1, 1);
         grid.add(favoritesButton(), 1, 1, 1, 1);
@@ -303,6 +311,14 @@ public class Main extends Application {
 
         favoritesList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> viewContact(contactMap.get(newValue)));
+    }
+
+    private void updateListView(Map<String, Contact> contactMap, ListView<String> contactList) {
+        ObservableList<String> entries = FXCollections.observableArrayList();
+        for (Contact c : contactMap.values()) {
+            entries.add(c.getName());
+        }
+        contactList.setItems(entries);
     }
 
     // -------------------------------------- DISPLAY CONTACT ---------------------------------------------------------

@@ -4,6 +4,7 @@ import model.Contact;
 import model.ContactMap;
 import model.FavoriteContact;
 import model.RegularContact;
+import model.exceptions.ContactAlreadyExistsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestContactMap {
 
     private ContactMap cMap;
+    private Map<String, Contact> testContactMap;
+    private Map<String, Contact> testFavoritesMap;
 
     private FavoriteContact c1 = new FavoriteContact(
             "John Smith","911","1600 Pennsylvania Ave.","jsmith@gmail.com", true );
@@ -29,10 +33,17 @@ public class TestContactMap {
             "Test Name","1234567890","193 Testing Rd.","testing@yahoo.com", false);
 
 
-
     @BeforeEach
     void beforeEachTest() {
         cMap = new ContactMap();
+    }
+
+    @Test
+    void testGetContactMap() {
+        cMap.setContactMap(testContactMap);
+        assertEquals(testContactMap, cMap.getContactMap());
+        cMap.setFavoritesMap(testFavoritesMap);
+        assertEquals(testFavoritesMap, cMap.getFavoritesMap());
     }
 
 
@@ -48,47 +59,20 @@ public class TestContactMap {
     }
 
 
-//    @Test
-//    void testAddAContact() {
-//        cMap.addNewContact
-//                ("John Smith---911---1600 Pennsylvania Ave.---jsmith@gmail.com---true");
-//        assertTrue(cMap.contains(c1));
-//        assertFalse(cMap.addNewContact
-//                ("John Smith---911---1600 Pennsylvania Ave.---jsmith@gmail.com---true"));
-//
-//        assertFalse(cMap.contains(c4));
-//        cMap.addNewContact
-//                ("Test Name---1234567890---193 Testing Rd.---testing@yahoo.com---false");
-//        assertTrue(cMap.contains(c1));
-//        assertFalse(cMap.addNewContact
-//                ("Test Name---1234567890---193 Testing Rd.---testing@yahoo.com---false"));
-//    }
-
-
     @Test
-    void testFindAContact() {
-        assertFalse(cMap.findContact("John Smith"));
-        cMap.add(c1);
-        assertTrue(cMap.findContact("John Smith"));
+    void testAddAContact() {
+        try {
+            cMap.addNewContact("John Smith---911---1600 Pennsylvania Ave.---jsmith@gmail.com---true");
+        } catch (ContactAlreadyExistsException e) {
+            fail();
+        }
+        assertTrue(cMap.contains(cMap.get("John Smith")));
+        try {
+            cMap.addNewContact("John Smith---911---1600 Pennsylvania Ave.---jsmith@gmail.com---true");
+        } catch (ContactAlreadyExistsException e) {
+            // expected
+        }
     }
-
-
-    @Test
-    void testPrintFavorites() {
-        assertTrue(cMap.printFavorites());
-    }
-
-
-    @Test
-    void testPrintContacts() {
-        assertFalse(cMap.printAllContacts());
-
-        cMap.add(c1);
-        cMap.add(c2);
-        cMap.add(c3);
-        assertTrue(cMap.printAllContacts());
-    }
-
 
     @Test
     void testDeleteContact() {
@@ -100,21 +84,30 @@ public class TestContactMap {
     }
 
 
-//    @Test
-//    void testEditContact() {
-//        assertNull(cMap.editContact("John Smith"));
-//        cMap.add(c1);
-//        assertEquals(c1,cMap.editContact("John Smith"));
-//    }
+    @Test
+    void testEditContact() {
+        cMap.add(c1);
+        cMap.editContact("John Smith---9095699045---1600 Pennsylvania Ave.---jsmith@gmail.com---true");
+        assertEquals("9095699045", cMap.get("John Smith").getPhone());
+
+        cMap.add(c2);
+        cMap.editContact("Martin Garrix---1-604-111-9023---Mars---jsmith@gmail.com---false");
+        assertEquals("jsmith@gmail.com", cMap.get("Martin Garrix").getEmail());
+        cMap.editContact("Martin Garrix---18001234567---Mars---jsmith@gmail.com---true");
+        assertEquals("18001234567", cMap.get("Martin Garrix").getPhone());
+        assertTrue(cMap.get("Martin Garrix").getFavorite());
+    }
 
 
     @Test
     void testLoad() throws IOException {
-        Contact test1 = new RegularContact("Test Name1","604-707-9090",
+        Contact test1 = new FavoriteContact("Test Name1","604-707-9090",
+                "101 Testing Dr.","testing@gmail.com", true);
+        Contact test1Copy = new FavoriteContact("Test Name1","604-707-9090",
                 "101 Testing Dr.","testing@gmail.com", true);
         Contact test2 = new RegularContact("Test Name2","604-707-9090",
                 "101 Testing Dr.","testing@gmail.com", false);
-        Contact test3 = new RegularContact("Test Name3","604-707-9090",
+        Contact test3 = new FavoriteContact("Test Name3","604-707-9090",
                 "101 Testing Dr.","testing@gmail.com", true);
         Contact test4 = new RegularContact("Test Name4","604-707-9090",
                 "101 Testing Dr.","testing@gmail.com", false);
