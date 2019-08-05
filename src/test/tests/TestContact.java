@@ -1,6 +1,5 @@
 package tests;
 
-import model.Contact;
 import model.FavoriteContact;
 import model.RegularContact;
 import org.junit.jupiter.api.AfterEach;
@@ -11,7 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,13 +21,10 @@ public class TestContact {
     private RegularContact rc3;
     private RegularContact rc4;
     private FavoriteContact fc;
-    private String n = "John Smith";
-    private String p = "911";
-    private String a = "1600 Pennsylvania Ave. Washington DC";
-    private String e = "johnsmith@gmail.com";
-
-    private List<Contact> favorites;
-    private List<Contact> contacts;
+    private final String n = "John Smith";
+    private final String p = "911";
+    private final String a = "1600 Pennsylvania Ave. Washington DC";
+    private final String e = "johnsmith@gmail.com";
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
@@ -144,6 +139,7 @@ public class TestContact {
         assertEquals("johnsmith@gmail.com", rc1.getEmail());
     }
 
+    @SuppressWarnings({"ConstantConditions", "EqualsWithItself", "SimplifiableJUnitAssertion"})
     @Test
     void testEquals() {
         RegularContact rc1a = new RegularContact(n, p, a, e, false);

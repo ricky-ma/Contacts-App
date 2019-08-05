@@ -1,11 +1,12 @@
 package model;
 
 import model.exceptions.ContactAlreadyExistsException;
+import model.interfaces.ContactMapObserver;
+import model.interfaces.ContactMapOperators;
+import model.interfaces.LoadAndSaveable;
 import model.interfaces.Observable;
-import model.interfaces.*;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -14,7 +15,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
 
     private Map<String, Contact> contactMap; // String = name of Contact
     private Map<String, Contact> favoritesMap = new HashMap<>();
-    private List<ContactMapObserver> observers = new ArrayList<>();
+    private final List<ContactMapObserver> observers = new ArrayList<>();
 
     public void setContactMap(Map<String, Contact> contactMap) {
         this.contactMap = contactMap;
@@ -90,6 +91,21 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
     }
 
 
+    public List<String[]> loadCSV(String fileName) throws IOException {
+        int count = 0;
+        List<String[]> content = new ArrayList<>();
+        try(BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                content.add(line.split(","));
+            }
+        } catch (FileNotFoundException e) {
+            //Some error logging
+        }
+        return content;
+    }
+
+
     // MODIFIES: contactfile.txt
     // EFFECTS: loops through each Contact in contactMap and writes name, phone, address, and email into contactfile.txt
     //          each Contact object is a new line
@@ -111,7 +127,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
     // EFFECTS: check if contact already exists, throw ContactAlreadyExistsException if true
     //          add contact to contacts if false
     public void addNewContact(String contactInfo) throws ContactAlreadyExistsException {
-        ArrayList<String> partsOfLine = splitOnDashes(contactInfo);
+        ArrayList<String> partsOfLine = splitLineOnRegex(contactInfo, "---");
         String name = partsOfLine.get(0);
         String phone = partsOfLine.get(1);
         String address = partsOfLine.get(2);
@@ -123,7 +139,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
     // EDIT CONTACT-------------------------------------------------------------------------------------------------
     // EFFECTS: edit contact details
     public void editContact(String contactInfo) {
-        ArrayList<String> partsOfLine = splitOnDashes(contactInfo);
+        ArrayList<String> partsOfLine = splitLineOnRegex(contactInfo, "---");
         String name = partsOfLine.get(0);
         String phone = partsOfLine.get(1);
         String address = partsOfLine.get(2);
@@ -139,10 +155,10 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
             if (contactMap.get(name).getFavorite()) {
                 contactMap.remove(name);
                 favoritesMap.remove(name);
-                notifyObservers(name);
+                notifyObservers();
             } else {
                 contactMap.remove(name);
-                notifyObservers(name);
+                notifyObservers();
             }
             return true;
         }
@@ -152,8 +168,8 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
     // PRIVATE METHODS--------------------------------------------------------------------------------------------------
 
     // EFFECTS: splits a line into separate Strings by "---", stores each String into an ArrayList
-    private static ArrayList<String> splitOnDashes(String line) {
-        String[] splits = line.split("---");
+    private static ArrayList<String> splitLineOnRegex(String line, String regex) {
+        String[] splits = line.split(regex);
         return new ArrayList<>(Arrays.asList(splits));
     }
 
@@ -164,6 +180,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
         }
     }
 
+    @SuppressWarnings({"SameReturnValue", "UnusedReturnValue"})
     private boolean addFavoriteOrRegular(String n, String p, String a, String e, Boolean favorite)
     throws ContactAlreadyExistsException {
         if (favorite) {
@@ -171,33 +188,34 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
             doesContactExist(contact);
             contactMap.put(n,contact);
             favoritesMap.put(n,contact);
-            notifyObservers(n);
+            notifyObservers();
         } else {
             Contact contact = new RegularContact(n, p, a, e, false);
             doesContactExist(contact);
             contactMap.put(n,contact);
-            notifyObservers(n);
+            notifyObservers();
         }
         return true;
     }
 
+    @SuppressWarnings({"SameReturnValue", "UnusedReturnValue"})
     private boolean editFavoriteOrRegular(String n, String p, String a, String e, Boolean favorite) {
         if (favorite) {
             Contact contact = new FavoriteContact(n, p, a, e, true);
             contactMap.put(n,contact);
             favoritesMap.put(n,contact);
-            notifyObservers(n);
+            notifyObservers();
         } else {
             Contact contact = new RegularContact(n, p, a, e, false);
             contactMap.put(n,contact);
-            notifyObservers(n);
+            notifyObservers();
         }
         return true;
     }
 
-    private void notifyObservers(String name) {
+    private void notifyObservers() {
         for (ContactMapObserver o : observers) {
-            o.updateModel(name);
+            o.updateModel();
         }
     }
 }

@@ -1,0 +1,112 @@
+.root {
+    -fx-font-size: 10pt;
+    -fx-font-family: "Helvetica";
+    -fx-background: sky-blue;
+    -fx-base: rgb(250, 250, 250);
+    -fx-focus-color: derive( sky-blue , 90% );
+    sky-blue: rgb(170, 207, 221);
+    brighter-sky-blue: derive( sky-blue , 50% );
+}
+.menu:pressed {
+ -fx-background: brighter-sky-blue;
+ -fx-background-color: sky-blue;
+ -fx-text-fill: white;
+}
+.menu:hover > .label {
+ -fx-background: brighter-sky-blue;
+ -fx-background-color: sky-blue;
+ -fx-text-fill: white;
+}
+.menu-bar .menu:selected {
+ -fx-background: brighter-sky-blue;
+ -fx-background-color: sky-blue;
+ -fx-text-fill: white;
+}
+
+.menu-bar .menu-item:selected {
+ -fx-background: rgb(17, 145, 213);
+ -fx-background-color: derive( rgb(17, 145, 213), 50%);
+ -fx-text-fill: white;
+}
+
+.menu-bar .menu-item:focused {
+ -fx-background: rgb(17, 145, 213);
+ -fx-background-color: derive( rgb(17, 145, 213), 50%);
+ -fx-text-fill: white;
+}
+
+.toggle-button{
+    -fx-text-fill: brighter-sky-blue;
+    -fx-border-color: rgba(255, 255, 255, .80);
+    -fx-border-radius: 8;
+    -fx-padding: 6 6 6 6;
+    -fx-font: bold italic 14pt "Helvetica";
+}
+
+.radio-button:selected .radio .dot {
+    -fx-background-color:brighter-sky-blue;
+}
+.check-box:selected .mark {
+    -fx-background-color:black;
+}
+
+.scroll-bar:horizontal .thumb {
+ -fx-background-color: brighter-sky-blue;
+}
+.scroll-bar:vertical .thumb {
+ -fx-background-color: brighter-sky-blue;
+}
+
+.slider .thumb {
+ -fx-background-color: brighter-sky-blue;
+}
+
+.progress-bar .bar {
+  -fx-box-border: brighter-sky-blue;
+  -fx-accent: brighter-sky-blue;
+}
+.progress-indicator{
+  -fx-progress-color: brighter-sky-blue;
+}
+.progress-indicator .percentage {
+  -fx-fill: rgb(255, 255, 255);
+}
+
+.button{
+    -fx-text-fill: black;
+    -fx-font: bold 10pt "Helvetica";
+    -fx-padding: 8 15 15 15;
+    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;
+    -fx-background-radius: 8;
+    -fx-background-color:
+        linear-gradient(from 0% 93% to 0% 100%, #8FA6B1 0%, #5B6A72 100%),
+        #5B6A72,
+        #E6F0F4,
+        radial-gradient(center 50% 50%, radius 100%, #FFFFFF, #FFFFFF);
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
+}
+
+.button:hover {
+    -fx-text-fill: black;
+    -fx-font: bold 10pt "Helvetica";
+    -fx-padding: 8 15 15 15;
+    -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;
+    -fx-background-radius: 8;
+    -fx-background-color:
+        linear-gradient(from 0% 93% to 0% 100%, #8FA6B1 0%, #5B6A72 100%),
+        #5B6A72,
+        radial-gradient(center 50% 50%, radius 100%, #8FA6B1, #FFFFFF);
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
+}
+
+.button:pressed {
+    -fx-scale-y: 0.9;
+    -fx-scale-x: 0.9;
+}
+
+.borders{
+    -fx-border-color: rgba(255, 255, 255, .80);
+    -fx-border-style: dotted;
+    -fx-border-width: 1;
+    -fx-border-insets: -2;
+}

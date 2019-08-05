@@ -15,7 +15,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.Contact;
 import model.ContactMap;
-import model.Singleton;
 import model.exceptions.ContactAlreadyExistsException;
 import model.interfaces.ContactMapObserver;
 
@@ -27,12 +26,11 @@ public class Main extends Application implements ContactMapObserver {
     private ContactMap contactMap;
     private Stage mainStage;
 
-    private ListView<String> contactList = new ListView<>();
-    private ListView<String> favoritesList = new ListView<>();
+    private final ListView<String> contactList = new ListView<>();
+    private final ListView<String> favoritesList = new ListView<>();
 
     // EFFECTS: runs the program
     public static void main(String[] args) {
-        Singleton x = Singleton.getInstance();
         launch(args);
     }
 
@@ -49,29 +47,21 @@ public class Main extends Application implements ContactMapObserver {
         contactMap = new ContactMap();
         try {
             contactMap.load("contactfile.txt");
+            contactMap.loadCSV("contacts.csv");
         } catch (IOException e) {
             //
         }
         contactMap.addObserver(this);
     }
 
-    @Override
-    public void stop() {
-        try {
-            contactMap.save("contactfile.txt");
-        } catch (IOException e) {
-            System.out.println("File not saved.");
-        }
-    }
-
-    public void updateModel(String name) {
+    public void updateModel() {
         updateListView(contactMap.getContactMap(), contactList);
-        updateListView(contactMap.getFavoritesMap(), favoritesList);
+        updateListView(contactMap.getContactMap(), favoritesList);
     }
 
     private void setSceneTitle(GridPane grid, String s, FontWeight bold, int i) {
         Text sceneTitle = new Text(s);
-        sceneTitle.setFont(Font.font("Helvetica", bold, 20));
+        sceneTitle.setFont(Font.font("Helvetica", bold, 30));
         grid.add(sceneTitle, 0, 0, i, 1);
     }
 
@@ -149,6 +139,12 @@ public class Main extends Application implements ContactMapObserver {
         }
     }
 
+    private Scene setNewScene(GridPane grid, int width, int height) {
+        Scene scene = new Scene(grid, width, height);
+        scene.getStylesheets().add("file:///C:/Users/mrric/IdeaProjects/project_rickyma/stylesheet");
+        return scene;
+    }
+
 
     // --------------------------------- ADD AND EDIT CONTACT ---------------------------------------------------------
     // ----------------------------------------------------------------------------------------------------------------
@@ -165,9 +161,9 @@ public class Main extends Application implements ContactMapObserver {
         Button btn = submitButton(nameTextField, phoneTextField, addressTextField,
                     emailTextField, favoriteCheckbox, true);
 
-        grid.add(backButton(), 0, 6, 1, 1);
-        grid.add(btn, 1, 6, 1, 1);
-        Scene scene = new Scene(grid, 400, 600);
+        grid.add(btn, 0, 6, 1, 1);
+        grid.add(backButton(), 1, 6, 2, 1);
+        Scene scene = setNewScene(grid, 400, 600);
         mainStage.setScene(scene);
     }
 
@@ -184,10 +180,19 @@ public class Main extends Application implements ContactMapObserver {
         Button btn = submitButton(nameTextField, phoneTextField, addressTextField,
                 emailTextField, favoriteCheckbox, false);
 
-        grid.add(backButton(), 0, 6, 1, 1);
-        grid.add(btn, 1, 6, 1, 1);
-        Scene scene = new Scene(grid, 400, 600);
+        grid.add(btn, 0, 6, 1, 1);
+        grid.add(backButton(), 1, 6, 2, 1);
+        Scene scene = setNewScene(grid, 400, 600);
         mainStage.setScene(scene);
+    }
+
+    @Override
+    public void stop() {
+        try {
+            contactMap.save("contactfile.txt");
+        } catch (IOException e) {
+            System.out.println("File not saved.");
+        }
     }
 
     private void contactAlreadyExistsWindow(Contact c) {
@@ -195,7 +200,7 @@ public class Main extends Application implements ContactMapObserver {
 
         Stage stage = new Stage();
         stage.setTitle("Contact Already Exists");
-        stage.setScene(new Scene(grid, 300, 300));
+        stage.setScene(setNewScene(grid, 300, 300));
 
         setSceneTitle(grid, "CONTACT ALREADY EXISTS", FontWeight.BOLD, 2);
 
@@ -211,7 +216,7 @@ public class Main extends Application implements ContactMapObserver {
 
     private TextField getTextField(GridPane grid, String s0, String s1, int i, String s2) {
         Label name = new Label(s0);
-        grid.add(name, 0, i);
+        grid.add(name, 0, i,3,1);
         TextField nameTextField = new TextField(s1);
         grid.add(nameTextField, 1, i);
         nameTextField.setTextFormatter(new TextFormatter<>(change ->
@@ -237,7 +242,8 @@ public class Main extends Application implements ContactMapObserver {
 
         Stage stage = new Stage();
         stage.setTitle("Delete Contact");
-        stage.setScene(new Scene(deleteGrid, 300, 300));
+        stage.setScene(setNewScene(deleteGrid, 300, 300));
+
 
         Button yes = new Button("YES");
         yes.setOnAction(event -> {
@@ -258,7 +264,7 @@ public class Main extends Application implements ContactMapObserver {
 
         Stage stage = new Stage();
         stage.setTitle("Contact Deleted");
-        stage.setScene(new Scene(grid, 300, 300));
+        stage.setScene(setNewScene(grid, 300, 300));
 
         contactMap.deleteContact(c.getName());
 
@@ -285,7 +291,7 @@ public class Main extends Application implements ContactMapObserver {
     private void displayContactList(String title, ListView<String> listView, Map<String, Contact> contactMap) {
         GridPane grid = gridSceneSetUp();
         setSceneTitle(grid, title, FontWeight.EXTRA_BOLD, 2);
-        Scene scene = new Scene(grid, 400, 600);
+        Scene scene = setNewScene(grid, 400, 600);
         listView.getSelectionModel().clearSelection();
 
         updateListView(contactMap, listView);
@@ -310,6 +316,7 @@ public class Main extends Application implements ContactMapObserver {
         contactList.setItems(entries);
     }
 
+    @SuppressWarnings("unchecked")
     private void handleSearchByKey(String oldVal, String newVal, ListView list, Map<String, Contact> contactMap) {
         ObservableList<String> entries = FXCollections.observableArrayList();
         for (Contact c : contactMap.values()) {
@@ -342,7 +349,7 @@ public class Main extends Application implements ContactMapObserver {
     // ----------------------------------------------------------------------------------------------------------------
     private void viewContact(Contact c) {
         GridPane grid = gridSceneSetUp();
-        Scene scene = new Scene(grid, 400, 600);
+        Scene scene = setNewScene(grid, 400, 600);
 
         Text name = new Text(c.getName());
         name.setFont(Font.font("Helvetica", FontWeight.EXTRA_BOLD, 20));
@@ -374,6 +381,7 @@ public class Main extends Application implements ContactMapObserver {
 
     // ----------------------------------------- FIND CONTACT ---------------------------------------------------------
     // ----------------------------------------------------------------------------------------------------------------
+
 }
 
 

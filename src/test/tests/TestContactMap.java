@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,17 +22,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestContactMap implements ContactMapObserver {
 
     private ContactMap cMap;
-    private Map<String, Contact> testContactMap;
-    private Map<String, Contact> testFavoritesMap;
 
-    private FavoriteContact c1 = new FavoriteContact(
+    private final FavoriteContact c1 = new FavoriteContact(
             "John Smith","911","1600 Pennsylvania Ave.","jsmith@gmail.com", true );
-    private RegularContact c2 = new RegularContact(
+    private final RegularContact c2 = new RegularContact(
             "Martin Garrix","1-604-111-9023","Mars","garrix99@yahoo.com", false);
-    private RegularContact c3 = new RegularContact(
+    private final RegularContact c3 = new RegularContact(
             "Stormzy","6789998212","Atlanta, Georgia","vossibop@gmail.com", false);
-    private RegularContact c4 = new RegularContact(
-            "Test Name","1234567890","193 Testing Rd.","testing@yahoo.com", false);
 
 
     @BeforeEach
@@ -42,6 +39,8 @@ public class TestContactMap implements ContactMapObserver {
 
     @Test
     void testGetContactMap() {
+        Map<String, Contact> testContactMap = new HashMap<>();
+        Map<String, Contact> testFavoritesMap = new HashMap<>();
         cMap.setContactMap(testContactMap);
         assertEquals(testContactMap, cMap.getContactMap());
         cMap.setFavoritesMap(testFavoritesMap);
@@ -153,11 +152,6 @@ public class TestContactMap implements ContactMapObserver {
         assertTrue(content.contains("Test Name4---604-707-9090---101 Testing Dr.---testing@gmail.com---false"));
     }
 
-    @Test
-    void testObserver() {
-
-    }
-
-    public void updateModel(String name) {
+    public void updateModel() {
     }
 }
