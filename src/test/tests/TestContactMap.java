@@ -5,6 +5,7 @@ import model.ContactMap;
 import model.FavoriteContact;
 import model.RegularContact;
 import model.exceptions.ContactAlreadyExistsException;
+import model.interfaces.ContactMapObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class TestContactMap {
+public class TestContactMap implements ContactMapObserver {
 
     private ContactMap cMap;
     private Map<String, Contact> testContactMap;
@@ -36,6 +37,7 @@ public class TestContactMap {
     @BeforeEach
     void beforeEachTest() {
         cMap = new ContactMap();
+        cMap.addObserver(this);
     }
 
     @Test
@@ -77,10 +79,14 @@ public class TestContactMap {
     @Test
     void testDeleteContact() {
         assertFalse(cMap.deleteContact("John Smith"));
+        assertFalse(cMap.deleteContact("Martin Garrix"));
 
         cMap.add(c1);
+        cMap.add(c2);
         assertTrue(cMap.deleteContact("John Smith"));
+        assertTrue(cMap.deleteContact("Martin Garrix"));
         assertFalse(cMap.contains(c1));
+        assertFalse(cMap.contains(c2));
     }
 
 
@@ -103,8 +109,6 @@ public class TestContactMap {
     void testLoad() throws IOException {
         Contact test1 = new FavoriteContact("Test Name1","604-707-9090",
                 "101 Testing Dr.","testing@gmail.com", true);
-        Contact test1Copy = new FavoriteContact("Test Name1","604-707-9090",
-                "101 Testing Dr.","testing@gmail.com", true);
         Contact test2 = new RegularContact("Test Name2","604-707-9090",
                 "101 Testing Dr.","testing@gmail.com", false);
         Contact test3 = new FavoriteContact("Test Name3","604-707-9090",
@@ -123,38 +127,37 @@ public class TestContactMap {
     @Test
     void testSave() throws IOException {
         String path = "C:\\Users\\mrric\\IdeaProjects\\project_rickyma\\testfilesave.txt";
-        String expectedContent =
-                "Test Name1---604-707-9090---101 Testing Dr.---testing@gmail.com---true\n" +
-                "Test Name2---604-707-9090---101 Testing Dr.---testing@gmail.com---false\n" +
-                "Test Name3---604-707-9090---101 Testing Dr.---testing@gmail.com---true\n" +
-                "Test Name4---604-707-9090---101 Testing Dr.---testing@gmail.com---false";
-        String actualContent = readAllBytesJava7(path);
-
+        Contact test1 = new FavoriteContact("Test Name1","604-707-9090",
+                "101 Testing Dr.","testing@gmail.com",true);
+        Contact test2 = new RegularContact("Test Name2","604-707-9090",
+                "101 Testing Dr.","testing@gmail.com",false);
+        Contact test3 = new FavoriteContact("Test Name3","604-707-9090",
+                "101 Testing Dr.","testing@gmail.com",true);
+        Contact test4 = new RegularContact("Test Name4","604-707-9090",
+                "101 Testing Dr.","testing@gmail.com",false);
         File file = new File("C:\\Users\\mrric\\IdeaProjects\\project_rickyma\\testfilesave.txt");
-//
-//        cMap.addNewContact("Test Name1---604-707-9090---101 Testing Dr.---testing@gmail.com---true");
-//        cMap.addNewContact("Test Name2---604-707-9090---101 Testing Dr.---testing@gmail.com---false");
-//        cMap.addNewContact("Test Name3---604-707-9090---101 Testing Dr.---testing@gmail.com---true");
-//        cMap.addNewContact("Test Name4---604-707-9090---101 Testing Dr.---testing@gmail.com---false");
+
+        cMap.add(test1);
+        cMap.add(test2);
+        cMap.add(test3);
+        cMap.add(test4);
         assertEquals(4, cMap.size());
 
 
         cMap.save("testfilesave.txt");
+        String content = new String(Files.readAllBytes(Paths.get(path)));
         assertTrue(file.length() > 0);
-        assertEquals(expectedContent, actualContent);
+        assertTrue(content.contains("Test Name1---604-707-9090---101 Testing Dr.---testing@gmail.com---true"));
+        assertTrue(content.contains("Test Name2---604-707-9090---101 Testing Dr.---testing@gmail.com---false"));
+        assertTrue(content.contains("Test Name3---604-707-9090---101 Testing Dr.---testing@gmail.com---true"));
+        assertTrue(content.contains("Test Name4---604-707-9090---101 Testing Dr.---testing@gmail.com---false"));
     }
 
-    private static String readAllBytesJava7(String filePath)
-    {
-        String content = "";
-        try
-        {
-            content = new String ( Files.readAllBytes( Paths.get(filePath) ) );
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return content;
+    @Test
+    void testObserver() {
+
+    }
+
+    public void updateModel(String name) {
     }
 }

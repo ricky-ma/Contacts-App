@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.Contact;
 import model.ContactMap;
+import model.Singleton;
 import model.exceptions.ContactAlreadyExistsException;
 import model.interfaces.ContactMapObserver;
 
@@ -25,13 +26,13 @@ public class Main extends Application implements ContactMapObserver {
 
     private ContactMap contactMap;
     private Stage mainStage;
-//    private ObservableList<String> items = FXCollections.observableArrayList();
 
     private ListView<String> contactList = new ListView<>();
     private ListView<String> favoritesList = new ListView<>();
 
     // EFFECTS: runs the program
     public static void main(String[] args) {
+        Singleton x = Singleton.getInstance();
         launch(args);
     }
 
@@ -74,7 +75,7 @@ public class Main extends Application implements ContactMapObserver {
         grid.add(sceneTitle, 0, 0, i, 1);
     }
 
-    private GridPane gridSceneSetUp() {
+    public static GridPane gridSceneSetUp() {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(25, 25, 25, 25));
         grid.setAlignment(Pos.CENTER);
@@ -101,19 +102,19 @@ public class Main extends Application implements ContactMapObserver {
         return btn5;
     }
 
-    private Button backButton() {
+    public Button backButton() {
         Button backBtn = new Button("BACK TO CONTACTS");
         backBtn.setOnAction(event -> displayAllContacts());
         return backBtn;
     }
 
-    private Button editButton(Contact c) {
+    public Button editButton(Contact c) {
         Button editBtn = new Button("EDIT");
         editBtn.setOnAction(event -> editContact(c));
         return editBtn;
     }
 
-    private Button deleteButton(Contact c) {
+    public Button deleteButton(Contact c) {
         Button deleteBtn = new Button("DELETE");
         deleteBtn.setOnAction(event -> deleteContact(c));
         return deleteBtn;
@@ -170,7 +171,7 @@ public class Main extends Application implements ContactMapObserver {
         mainStage.setScene(scene);
     }
 
-    private void editContact(Contact c) {
+    public void editContact(Contact c) {
         GridPane grid = gridSceneSetUp();
         setSceneTitle(grid, "EDIT CONTACT INFO", FontWeight.EXTRA_BOLD, 2);
 
@@ -274,42 +275,30 @@ public class Main extends Application implements ContactMapObserver {
     // ------------------------------------- DISPLAY CONTACTS ---------------------------------------------------------
     // ----------------------------------------------------------------------------------------------------------------
     private void displayAllContacts() {
-        GridPane grid = gridSceneSetUp();
-        setSceneTitle(grid, "CONTACTS", FontWeight.EXTRA_BOLD, 2);
-        Scene scene = new Scene(grid, 400, 600);
-        contactList.getSelectionModel().clearSelection();
-
-        updateListView(contactMap.getContactMap(), contactList);
-
-        grid.add(addButton(), 0, 1, 1, 1);
-        grid.add(favoritesButton(), 1, 1, 1, 1);
-        grid.add(allButton(), 2, 1, 1, 1);
-        grid.add(searchBox(contactList, contactMap.getContactMap()),0,2,3,1);
-        grid.add(contactList,0,3,3,1);
-
-        mainStage.setScene(scene);
-
-        contactList.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> viewContact(contactMap.get(newValue)));
+        displayContactList("CONTACTS", contactList, contactMap.getContactMap());
     }
 
     private void displayFavorites() {
-        GridPane grid = gridSceneSetUp();
-        setSceneTitle(grid, "FAVORITES", FontWeight.EXTRA_BOLD, 2);
-        Scene scene = new Scene(grid, 400, 600);
-        favoritesList.getSelectionModel().clearSelection();
+        displayContactList("FAVORITES", favoritesList, contactMap.getFavoritesMap());
+    }
 
-        updateListView(contactMap.getFavoritesMap(), favoritesList);
+    private void displayContactList(String title, ListView<String> listView, Map<String, Contact> contactMap) {
+        GridPane grid = gridSceneSetUp();
+        setSceneTitle(grid, title, FontWeight.EXTRA_BOLD, 2);
+        Scene scene = new Scene(grid, 400, 600);
+        listView.getSelectionModel().clearSelection();
+
+        updateListView(contactMap, listView);
 
         grid.add(addButton(), 0, 1, 1, 1);
         grid.add(favoritesButton(), 1, 1, 1, 1);
         grid.add(allButton(), 2, 1, 1, 1);
-        grid.add(searchBox(favoritesList, contactMap.getFavoritesMap()),0,2,3,1);
-        grid.add(favoritesList,0,3,3,1);
+        grid.add(searchBox(listView, contactMap), 0, 2, 3, 1);
+        grid.add(listView, 0, 3, 3, 1);
 
         mainStage.setScene(scene);
 
-        favoritesList.getSelectionModel().selectedItemProperty().addListener(
+        listView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> viewContact(contactMap.get(newValue)));
     }
 
@@ -321,41 +310,6 @@ public class Main extends Application implements ContactMapObserver {
         contactList.setItems(entries);
     }
 
-    // -------------------------------------- DISPLAY CONTACT ---------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------------------------
-    private void viewContact(Contact c) {
-        GridPane grid = gridSceneSetUp();
-        Scene scene = new Scene(grid, 400, 600);
-
-        Text name = new Text(c.getName());
-        name.setFont(Font.font("Helvetica", FontWeight.EXTRA_BOLD, 20));
-        Text phone = new Text("PHONE: " + c.getPhone());
-        phone.setFont(Font.font("Helvetica", FontWeight.BOLD, 15));
-        Text address = new Text("ADDRESS: " + c.getAddress());
-        address.setFont(Font.font("Helvetica", FontWeight.BOLD, 15));
-        Text email = new Text("EMAIL: " + c.getEmail());
-        email.setFont(Font.font("Helvetica", FontWeight.BOLD, 15));
-        Text favorite = new Text("FAVORITE: " + c.getFavorite());
-        favorite.setFont(Font.font("Helvetica", FontWeight.BOLD, 15));
-
-        viewContactDisplay(grid, name, phone, address, email, favorite);
-        grid.add(backButton(), 0, 5, 1, 1);
-        grid.add(editButton(c), 1, 5, 1, 1);
-        grid.add(deleteButton(c), 2, 5, 1, 1);
-        mainStage.setScene(scene);
-    }
-
-    private void viewContactDisplay(GridPane grid, Text name, Text phone, Text address, Text email, Text favorite) {
-        grid.add(name, 0, 0, 2, 1);
-        grid.add(phone, 0, 1, 2, 1);
-        grid.add(address, 0, 2, 2, 1);
-        grid.add(email, 0, 3, 2, 1);
-        grid.add(favorite, 0, 4, 2, 1);
-    }
-
-
-    // ----------------------------------------- FIND CONTACT ---------------------------------------------------------
-    // ----------------------------------------------------------------------------------------------------------------
     private void handleSearchByKey(String oldVal, String newVal, ListView list, Map<String, Contact> contactMap) {
         ObservableList<String> entries = FXCollections.observableArrayList();
         for (Contact c : contactMap.values()) {
@@ -383,6 +337,43 @@ public class Main extends Application implements ContactMapObserver {
                 (observable, oldVal, newVal) -> handleSearchByKey(oldVal, newVal, list, contactMap));
         return txt;
     }
+
+    // -------------------------------------- DISPLAY CONTACT ---------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------
+    private void viewContact(Contact c) {
+        GridPane grid = gridSceneSetUp();
+        Scene scene = new Scene(grid, 400, 600);
+
+        Text name = new Text(c.getName());
+        name.setFont(Font.font("Helvetica", FontWeight.EXTRA_BOLD, 20));
+        Text phone = new Text("PHONE: " + c.getPhone());
+        phone.setFont(Font.font("Helvetica", FontWeight.BOLD, 15));
+        Text address = new Text("ADDRESS: " + c.getAddress());
+        address.setFont(Font.font("Helvetica", FontWeight.BOLD, 15));
+        Text email = new Text("EMAIL: " + c.getEmail());
+        email.setFont(Font.font("Helvetica", FontWeight.BOLD, 15));
+        Text favorite = new Text("FAVORITE: " + c.getFavorite());
+        favorite.setFont(Font.font("Helvetica", FontWeight.BOLD, 15));
+
+        viewContactDisplay(grid, name, phone, address, email, favorite);
+        grid.add(backButton(), 0, 5, 1, 1);
+        grid.add(editButton(c), 1, 5, 1, 1);
+        grid.add(deleteButton(c), 2, 5, 1, 1);
+        mainStage.setScene(scene);
+    }
+
+    private static void viewContactDisplay(GridPane grid, Text name, Text phone,
+                                           Text address, Text email, Text favorite) {
+        grid.add(name, 0, 0, 2, 1);
+        grid.add(phone, 0, 1, 2, 1);
+        grid.add(address, 0, 2, 2, 1);
+        grid.add(email, 0, 3, 2, 1);
+        grid.add(favorite, 0, 4, 2, 1);
+    }
+
+
+    // ----------------------------------------- FIND CONTACT ---------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------
 }
 
 

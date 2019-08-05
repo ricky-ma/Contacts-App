@@ -1,5 +1,11 @@
 package ui;
 
+import javafx.scene.Scene;
+import model.ContactMap;
+
 public interface Folder {
-    void view(String s);
+
+    static Scene view(String s, ContactMap contactMap) {
+        return null;
+    }
 }
