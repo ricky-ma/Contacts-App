@@ -117,39 +117,6 @@ public class TestContactMap implements ContactMapObserver {
 
 
     @Test
-    void testLoad() throws IOException {
-        Contact test1 = new FavoriteContact("Test Name1","604-707-9090",
-                "101 Testing Dr.","testing@gmail.com", true);
-        Contact test2 = new RegularContact("Test Name2","604-707-9090",
-                "101 Testing Dr.","testing@gmail.com", false);
-        Contact test3 = new FavoriteContact("Test Name3","604-707-9090",
-                "101 Testing Dr.","testing@gmail.com", true);
-        Contact test4 = new RegularContact("Test Name4","604-707-9090",
-                "101 Testing Dr.","testing@gmail.com", false);
-
-        cMap.load("testfileload.txt");
-        assertTrue(cMap.contains(test1));
-        assertTrue(cMap.contains(test2));
-        assertTrue(cMap.contains(test3));
-        assertTrue(cMap.contains(test4));
-        assertEquals(4, cMap.size());
-        System.out.println(cMap.size());
-    }
-
-
-    @Test
-    void testLoadCSV() throws IOException {
-        Contact test1 = new RegularContact("Ashley To","9098599259","","",false);
-        Contact test2 = new RegularContact("Zoe Lau","(909) 223-8686","","",false);
-
-        cMap.loadCSV("testcontacts.csv");
-        // TODO: FIX THIS PART
-        assertFalse(cMap.contains(test1));
-        assertFalse(cMap.contains(test2));
-    }
-
-
-    @Test
     void testSave() throws IOException {
         String path = "C:\\Users\\mrric\\IdeaProjects\\project_rickyma\\testfilesave.txt";
         Contact test1 = new FavoriteContact("Test Name1","604-707-9090",

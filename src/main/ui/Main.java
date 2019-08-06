@@ -18,7 +18,14 @@ import model.ContactMap;
 import model.exceptions.ContactAlreadyExistsException;
 import model.interfaces.ContactMapObserver;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Main extends Application implements ContactMapObserver {
@@ -28,7 +35,6 @@ public class Main extends Application implements ContactMapObserver {
 
     private final ListView<String> contactList = new ListView<>();
     private final ListView<String> favoritesList = new ListView<>();
-    private final ListView<String> groupsList = new ListView<>();
 
     // EFFECTS: runs the program
     public static void main(String[] args) {
@@ -58,11 +64,44 @@ public class Main extends Application implements ContactMapObserver {
         updateListView(contactMap.getContactMap(), favoritesList);
     }
 
+    // MODIFIES: contacts
+    // EFFECTS: gets parameters of each contact from contactfile.txt and creates a new RegularContact object
+    //          adds newly created contact to contactMap
+    private void load() throws IOException {
+        List<String> lines = Files.readAllLines(Paths.get("contactfile.txt"));
+        for (String line : lines) {
+            try {
+                contactMap.addNewContact(line);
+            } catch (ContactAlreadyExistsException e) {
+                // skips that contact
+            }
+        }
+    }
+
+    private List<String[]> loadCSV(String fileName) throws IOException {
+        List<String[]> content = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                content.add(line.split(","));
+//                try {
+//                    addNewCSVContact(line);
+//                } catch (ContactAlreadyExistsException e) {
+//                    // skips that contact
+//                }
+            }
+        } catch (FileNotFoundException e) {
+            //Some error logging
+        }
+        return content;
+    }
+
     private void createAndPopulateModel() {
         contactMap = new ContactMap();
         try {
-            contactMap.load("contactfile.txt");
-            contactMap.loadCSV("contacts.csv");
+            load();
+            loadCSV("contacts.csv");
         } catch (IOException e) {
             //
         }

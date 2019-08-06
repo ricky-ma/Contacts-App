@@ -3,15 +3,13 @@ package model;
 import model.exceptions.ContactAlreadyExistsException;
 import model.interfaces.ContactMapObserver;
 import model.interfaces.ContactMapOperators;
-import model.interfaces.LoadAndSaveable;
 import model.interfaces.Observable;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
-public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observable {
+public class ContactMap implements ContactMapOperators, Observable {
 
     private Map<String, Contact> contactMap; // String = name of Contact
     private Map<String, Contact> favoritesMap = new HashMap<>();
@@ -74,52 +72,6 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
     public void addObserver(ContactMapObserver o) {
         observers.add(o);
     }
-
-
-    // MODIFIES: contacts
-    // EFFECTS: gets parameters of each contact from contactfile.txt and creates a new RegularContact object
-    //          adds newly created contact to contactMap
-    public void load(String fileName) throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get(fileName));
-        for (String line : lines) {
-            try {
-                addNewContact(line);
-            } catch (ContactAlreadyExistsException e) {
-                // skips that contact
-            }
-        }
-    }
-
-
-    public List<String[]> loadCSV(String fileName) throws IOException {
-        List<String[]> content = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                content.add(line.split(","));
-//                try {
-//                    addNewCSVContact(line);
-//                } catch (ContactAlreadyExistsException e) {
-//                    // skips that contact
-//                }
-            }
-        } catch (FileNotFoundException e) {
-            //Some error logging
-        }
-        return content;
-    }
-//
-//
-//    public void addNewCSVContact(String contactInfo) throws ContactAlreadyExistsException {
-//        ArrayList<String> partsOfLine = splitLineOnRegex(contactInfo, ",");
-//        String name = partsOfLine.get(0);
-//        String phone = partsOfLine.get(34);
-//        String address = partsOfLine.get(36);
-//        String email = partsOfLine.get(30);
-//        addFavoriteOrRegular(name, phone, address, email, false);
-//    }
-
 
     // MODIFIES: contactfile.txt
     // EFFECTS: loops through each Contact in contactMap and writes name, phone, address, and email into contactfile.txt
