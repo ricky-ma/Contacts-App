@@ -166,7 +166,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
     // DELETE CONTACT-----------------------------------------------------------------------------------------------
     // EFFECTS: deletes a contact from contacts
     public boolean deleteContact(String name) {
-        if (contactMap.containsKey(name) || favoritesMap.containsKey(name)) {
+        if (contactMap.containsKey(name)) {
             if (contactMap.get(name).getFavorite()) {
                 contactMap.remove(name);
                 favoritesMap.remove(name);

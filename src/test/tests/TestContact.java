@@ -1,5 +1,6 @@
 package tests;
 
+import model.ContactMap;
 import model.FavoriteContact;
 import model.RegularContact;
 import org.junit.jupiter.api.AfterEach;
@@ -90,7 +91,7 @@ public class TestContact {
         System.setIn(in);
         rc1.editContactDetails(rc1,1);
 
-        String input2 = "909-569-9045";
+        String input2 = "(909)-569-9045";
         InputStream in2 = new ByteArrayInputStream(input2.getBytes());
         System.setIn(in2);
         rc1.editContactDetails(rc1,2);
@@ -111,7 +112,7 @@ public class TestContact {
         assertFalse(rc1.getFavorite());
 
         assertEquals("Ricky Ma", rc1.getName());
-        assertEquals("909-569-9045", rc1.getPhone());
+        assertEquals("(909)-569-9045", rc1.getPhone());
         assertEquals("mr.rickyma@gmail.com", rc1.getEmail());
         assertEquals("101 Testing Street, Vancouver BC", rc1.getAddress());
     }
@@ -142,12 +143,14 @@ public class TestContact {
     @SuppressWarnings({"ConstantConditions", "EqualsWithItself", "SimplifiableJUnitAssertion"})
     @Test
     void testEquals() {
+        ContactMap cMap = new ContactMap();
         RegularContact rc1a = new RegularContact(n, p, a, e, false);
         assertEquals(rc1,rc1a);
         assertNotEquals(rc1,rc2);
 
         assertTrue(rc1.equals(rc1));
         assertFalse(rc1.equals(null));
+        assertFalse(rc1.equals(cMap));
     }
 
     @Test

@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestContactMap implements ContactMapObserver {
 
     private ContactMap cMap;
+    private ContactMap fMap = new ContactMap();
 
     private final FavoriteContact c1 = new FavoriteContact(
             "John Smith","911","1600 Pennsylvania Ave.","jsmith@gmail.com", true );
@@ -73,18 +74,29 @@ public class TestContactMap implements ContactMapObserver {
         } catch (ContactAlreadyExistsException e) {
             // expected
         }
+        try {
+            cMap.addNewContact("Martin Garrix---1-604-111-9023---Mars---garrix99@yahoo.com---false");
+        } catch (ContactAlreadyExistsException e) {
+            fail();
+        }
+        assertTrue(cMap.contains(cMap.get("Martin Garrix")));
+        try {
+            cMap.addNewContact("Martin Garrix---1-604-111-9023---Mars---garrix99@yahoo.com---false");
+        } catch (ContactAlreadyExistsException e) {
+            // expected
+        }
     }
 
     @Test
     void testDeleteContact() {
-        assertFalse(cMap.deleteContact("John Smith"));
+        assertFalse(fMap.deleteContact("John Smith"));
         assertFalse(cMap.deleteContact("Martin Garrix"));
 
-        cMap.add(c1);
+        fMap.add(c1);
         cMap.add(c2);
-        assertTrue(cMap.deleteContact("John Smith"));
+        assertTrue(fMap.deleteContact("John Smith"));
         assertTrue(cMap.deleteContact("Martin Garrix"));
-        assertFalse(cMap.contains(c1));
+        assertFalse(fMap.contains(c1));
         assertFalse(cMap.contains(c2));
     }
 
@@ -120,6 +132,8 @@ public class TestContactMap implements ContactMapObserver {
         assertTrue(cMap.contains(test2));
         assertTrue(cMap.contains(test3));
         assertTrue(cMap.contains(test4));
+        assertEquals(4, cMap.size());
+        System.out.println(cMap.size());
     }
 
 
