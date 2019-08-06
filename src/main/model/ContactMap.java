@@ -94,7 +94,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
     public List<String[]> loadCSV(String fileName) throws IOException {
         List<String[]> content = new ArrayList<>();
 
-        try(BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = br.readLine()) != null) {
                 content.add(line.split(","));
@@ -197,7 +197,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
 
     @SuppressWarnings({"SameReturnValue", "UnusedReturnValue"})
     private boolean addFavoriteOrRegular(String n, String p, String a, String e, Boolean favorite)
-    throws ContactAlreadyExistsException {
+                                        throws ContactAlreadyExistsException {
         if (favorite) {
             Contact contact = new FavoriteContact(n, p, a, e, true);
             doesContactExist(contact);
