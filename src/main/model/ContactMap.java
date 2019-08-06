@@ -94,7 +94,7 @@ public class ContactMap implements ContactMapOperators, Observable {
     // EFFECTS: check if contact already exists, throw ContactAlreadyExistsException if true
     //          add contact to contacts if false
     public void addNewContact(String contactInfo) throws ContactAlreadyExistsException {
-        ArrayList<String> partsOfLine = splitLineOnRegex(contactInfo, "---");
+        ArrayList<String> partsOfLine = splitLineOnRegex(contactInfo);
         String name = partsOfLine.get(0);
         String phone = partsOfLine.get(1);
         String address = partsOfLine.get(2);
@@ -106,7 +106,7 @@ public class ContactMap implements ContactMapOperators, Observable {
     // EDIT CONTACT-------------------------------------------------------------------------------------------------
     // EFFECTS: edit contact details
     public void editContact(String contactInfo) {
-        ArrayList<String> partsOfLine = splitLineOnRegex(contactInfo, "---");
+        ArrayList<String> partsOfLine = splitLineOnRegex(contactInfo);
         String name = partsOfLine.get(0);
         String phone = partsOfLine.get(1);
         String address = partsOfLine.get(2);
@@ -135,8 +135,8 @@ public class ContactMap implements ContactMapOperators, Observable {
     // PRIVATE METHODS--------------------------------------------------------------------------------------------------
 
     // EFFECTS: splits a line into separate Strings by "---", stores each String into an ArrayList
-    private static ArrayList<String> splitLineOnRegex(String line, String regex) {
-        String[] splits = line.split(regex);
+    private static ArrayList<String> splitLineOnRegex(String line) {
+        String[] splits = line.split("---");
         return new ArrayList<>(Arrays.asList(splits));
     }
 

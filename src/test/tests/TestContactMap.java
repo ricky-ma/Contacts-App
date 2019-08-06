@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestContactMap implements ContactMapObserver {
 
     private ContactMap cMap;
-    private ContactMap fMap = new ContactMap();
+    private final ContactMap fMap = new ContactMap();
 
     private final FavoriteContact c1 = new FavoriteContact(
             "John Smith","911","1600 Pennsylvania Ave.","jsmith@gmail.com", true );

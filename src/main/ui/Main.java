@@ -78,10 +78,11 @@ public class Main extends Application implements ContactMapObserver {
         }
     }
 
-    private List<String[]> loadCSV(String fileName) throws IOException {
+    private void loadCSV() throws IOException {
+        //noinspection MismatchedQueryAndUpdateOfCollection
         List<String[]> content = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("contacts.csv"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 content.add(line.split(","));
@@ -94,14 +95,13 @@ public class Main extends Application implements ContactMapObserver {
         } catch (FileNotFoundException e) {
             //Some error logging
         }
-        return content;
     }
 
     private void createAndPopulateModel() {
         contactMap = new ContactMap();
         try {
             load();
-            loadCSV("contacts.csv");
+            loadCSV();
         } catch (IOException e) {
             //
         }

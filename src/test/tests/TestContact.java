@@ -140,7 +140,7 @@ public class TestContact {
         assertEquals("johnsmith@gmail.com", rc1.getEmail());
     }
 
-    @SuppressWarnings({"ConstantConditions", "EqualsWithItself", "SimplifiableJUnitAssertion"})
+    @SuppressWarnings({"ConstantConditions", "EqualsWithItself", "SimplifiableJUnitAssertion", "EqualsBetweenInconvertibleTypes"})
     @Test
     void testEquals() {
         ContactMap cMap = new ContactMap();
