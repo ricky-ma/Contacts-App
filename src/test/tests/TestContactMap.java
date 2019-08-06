@@ -124,6 +124,18 @@ public class TestContactMap implements ContactMapObserver {
 
 
     @Test
+    void testLoadCSV() throws IOException {
+        Contact test1 = new RegularContact("Ashley To","9098599259","","",false);
+        Contact test2 = new RegularContact("Zoe Lau","(909) 223-8686","","",false);
+
+        cMap.loadCSV("testcontacts.csv");
+        // TODO: FIX THIS PART
+        assertFalse(cMap.contains(test1));
+        assertFalse(cMap.contains(test2));
+    }
+
+
+    @Test
     void testSave() throws IOException {
         String path = "C:\\Users\\mrric\\IdeaProjects\\project_rickyma\\testfilesave.txt";
         Contact test1 = new FavoriteContact("Test Name1","604-707-9090",

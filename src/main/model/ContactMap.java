@@ -92,18 +92,33 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
 
 
     public List<String[]> loadCSV(String fileName) throws IOException {
-        int count = 0;
         List<String[]> content = new ArrayList<>();
+
         try(BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String line = "";
+            String line;
             while ((line = br.readLine()) != null) {
                 content.add(line.split(","));
+//                try {
+//                    addNewCSVContact(line);
+//                } catch (ContactAlreadyExistsException e) {
+//                    // skips that contact
+//                }
             }
         } catch (FileNotFoundException e) {
             //Some error logging
         }
         return content;
     }
+//
+//
+//    public void addNewCSVContact(String contactInfo) throws ContactAlreadyExistsException {
+//        ArrayList<String> partsOfLine = splitLineOnRegex(contactInfo, ",");
+//        String name = partsOfLine.get(0);
+//        String phone = partsOfLine.get(34);
+//        String address = partsOfLine.get(36);
+//        String email = partsOfLine.get(30);
+//        addFavoriteOrRegular(name, phone, address, email, false);
+//    }
 
 
     // MODIFIES: contactfile.txt
@@ -208,6 +223,7 @@ public class ContactMap implements LoadAndSaveable, ContactMapOperators, Observa
         } else {
             Contact contact = new RegularContact(n, p, a, e, false);
             contactMap.put(n,contact);
+            favoritesMap.remove(n);
             notifyObservers();
         }
         return true;

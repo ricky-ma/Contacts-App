@@ -66,9 +66,6 @@ public abstract class Contact {
         return favorite;
     }
 
-    public void add() {
-    }
-
 
     @Override
     public boolean equals(Object o) {

@@ -294,6 +294,7 @@ public class Main extends Application implements ContactMapObserver {
         setSceneTitle(grid, title, FontWeight.EXTRA_BOLD, 2);
         Scene scene = setNewScene(grid, 400, 600);
         listView.getSelectionModel().clearSelection();
+        listView.getItems().clear();
 
         updateListView(contactMap, listView);
 
